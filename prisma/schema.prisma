@@ -12,26 +12,23 @@ datasource db {
   // directUrl = env("DATABASE_URL_UNPOOLED")
 }
 
-model User {
-  id              Int              @id @default(autoincrement())
-  email           String           @unique
-  password        String
-  cardCollections CardCollection[]
-}
+model Collection {
+  id          Int     @id @default(autoincrement())
+  name        String
+  description String?
+  userId      String
+  cards       Card[]
 
-model CardCollection {
-  id       Int    @id @default(autoincrement())
-  name     String
-  author   User   @relation(fields: [authorId], references: [id])
-  authorId Int
-  cards    Card[]
+  @@index([userId])
 }
 
 model Card {
-  id           Int            @id @default(autoincrement())
+  id           Int        @id @default(autoincrement())
   question     String
   answer       String
-  collection   CardCollection @relation(fields: [collectionId], references: [id])
+  collection   Collection @relation(fields: [collectionId], references: [id])
   collectionId Int
   box          Int
+
+  @@index([collectionId])
 }

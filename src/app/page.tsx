@@ -1,12 +1,11 @@
-import { SignInButton, SignedOut, SignedIn } from "@clerk/nextjs";
-import { db } from "~/server/db";
+import { SignInButton, SignedIn, SignedOut } from "@clerk/nextjs";
+import CollectionList from "./_components/collection-list";
 
 export const dynamic = "force-dynamic";
 
-export default async function HomePage() {
-  const cards = await db.card.findMany();
+export default function HomePage() {
   return (
-    <main>
+    <main className="p-4">
       <SignedOut>
         <div className="hero min-h-screen bg-base-200">
           <div className="hero-content text-center">
@@ -16,15 +15,15 @@ export default async function HomePage() {
                 Приложение для эффективного запоминания и повторения на основе
                 флэш-карточек
               </p>
-              <SignInButton className="btn btn-primary">Войти</SignInButton>
+              <SignInButton>
+                <button className="btn btn-primary">Войти</button>
+              </SignInButton>
             </div>
           </div>
         </div>
       </SignedOut>
       <SignedIn>
-        {cards.map((card) => {
-          return <div key={card.id}>{card.question}</div>;
-        })}
+        <CollectionList />
       </SignedIn>
     </main>
   );
