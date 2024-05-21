@@ -1,6 +1,6 @@
 import { getMyCollections } from "~/server/queries";
 import CollectionCard from "./collection-card";
-import NewCollectionModal from "./new-collection-modal";
+import NewCollectionButton from "./new-collection-button";
 
 export default async function CollectionList() {
   const collections = await getMyCollections();
@@ -12,7 +12,7 @@ export default async function CollectionList() {
           return <CollectionCard key={c.id} collection={c} />;
         })}
       </ul>
-      <NewCollectionModal />
+      <NewCollectionButton />
     </div>
   );
 }

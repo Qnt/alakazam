@@ -1,32 +1,16 @@
 "use server";
 
 import { auth } from "@clerk/nextjs/server";
-import { Prisma } from "@prisma/client";
+import { type Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
-import { z } from "zod";
+import { type z } from "zod";
 import { db } from "~/server/db";
+import { schema } from "./schemas/collection-schema";
 
-const schema = z.object({
-  name: z
-    .string({
-      required_error: "Имя обязательно",
-      invalid_type_error: "Имя должно быть строкой",
-    })
-    .min(1, {
-      message: "Имя не может быть пустым",
-    }),
-  description: z
-    .string({
-      invalid_type_error: "Описание должно быть строкой",
-    })
-    .nullable()
-    .optional(),
-  userId: z.string({
-    required_error: "UserId обязателен",
-  }),
-}) satisfies z.ZodType<Prisma.CollectionCreateWithoutCardsInput>;
+schema satisfies z.ZodType<Prisma.CollectionCreateWithoutCardsInput>;
 
 export type FormState = {
+  success: boolean;
   errors?: {
     name?: string[];
     description?: string[];
@@ -41,6 +25,10 @@ export async function createCollection(
 ) {
   const { userId } = auth();
 
+  if (!userId) {
+    throw new Error("You must be signed in to perform this action");
+  }
+
   const description = formData.get("description");
 
   const validatedFields = schema.safeParse({
@@ -51,12 +39,13 @@ export async function createCollection(
 
   if (!validatedFields.success) {
     return {
+      success: false,
       errors: validatedFields.error.flatten().fieldErrors,
       message: "Ошибка при создании коллекции",
     };
   }
 
-  const collection = await db.collection.create({
+  await db.collection.create({
     data: {
       name: validatedFields.data.name,
       description: validatedFields.data.description,
@@ -67,6 +56,7 @@ export async function createCollection(
   revalidatePath("/");
 
   return {
-    message: `Коллекция "${validatedFields.data.name}" добавлена`
-  }
+    success: true,
+    message: `Коллекция "${validatedFields.data.name}" добавлена`,
+  };
 }
