@@ -60,3 +60,19 @@ export async function createCollection(
     message: `Коллекция "${validatedFields.data.name}" добавлена`,
   };
 }
+
+// export async function deleteCollection( ) {
+//   const { userId } = auth();
+
+//   if (!userId) {
+//     throw new Error("You must be signed in to perform this action");
+//   }
+
+//   revalidatePath("/");
+
+//   return {
+//     success: true,
+//     message: `Коллекция "${validatedFields.data.name}" удалена`,
+//   };
+
+// }
