@@ -1,10 +1,17 @@
 "use client";
 
-import { useRef } from "react";
+import { nanoid } from "nanoid";
+import { useRef, useState } from "react";
 import NewCollectionModal from "./new-collection-modal";
 
 export default function NewCollectionButton() {
   const dialogRef = useRef<HTMLDialogElement>(null);
+
+  const [modalKey, setModalKey] = useState(() => nanoid());
+
+  const resetKey = () => {
+    setModalKey(nanoid());
+  };
 
   return (
     <>
@@ -16,7 +23,7 @@ export default function NewCollectionButton() {
       >
         Создать коллекцию
       </button>
-      <NewCollectionModal ref={dialogRef} />
+      <NewCollectionModal ref={dialogRef} key={modalKey} resetKey={resetKey} />
     </>
   );
 }
