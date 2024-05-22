@@ -1,22 +1,22 @@
 "use client";
 
+import { useRef } from "react";
 import NewCollectionModal from "./new-collection-modal";
 
 export default function NewCollectionButton() {
+  const dialogRef = useRef<HTMLDialogElement>(null);
+
   return (
     <>
       <button
         className="btn btn-outline"
         onClick={() => {
-          const dialog = document.getElementById(
-            "form_modal",
-          ) as HTMLDialogElement;
-          return dialog.showModal();
+          dialogRef.current?.showModal();
         }}
       >
         Создать коллекцию
       </button>
-      <NewCollectionModal />
+      <NewCollectionModal ref={dialogRef} />
     </>
   );
 }
