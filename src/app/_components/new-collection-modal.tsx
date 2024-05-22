@@ -1,11 +1,25 @@
 "use client";
 
 import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
-import { useFormState } from "react-dom";
+import { useFormState, useFormStatus } from "react-dom";
 import { createCollection, type FormState } from "../actions";
 
 export type CollectionModalProps = {
   resetKey: () => void;
+};
+
+const SubmitButton = () => {
+  const { pending } = useFormStatus();
+
+  return (
+    <button className="btn btn-primary" disabled={pending}>
+      {pending ? (
+        <span className="loading loading-spinner loading-md"></span>
+      ) : (
+        <span>Создать</span>
+      )}
+    </button>
+  );
 };
 
 const NewCollectionModal = forwardRef<HTMLDialogElement, CollectionModalProps>(
@@ -17,8 +31,6 @@ const NewCollectionModal = forwardRef<HTMLDialogElement, CollectionModalProps>(
     );
     const innerDialogRef = useRef<HTMLDialogElement>(null);
     useImperativeHandle(dialogRef, () => innerDialogRef.current!, []);
-
-    console.log(formState);
 
     useEffect(() => {
       if (formState.success) {
@@ -77,7 +89,7 @@ const NewCollectionModal = forwardRef<HTMLDialogElement, CollectionModalProps>(
                 />
               </label>
             </div>
-            <button className="btn btn-primary">Создать</button>
+            <SubmitButton />
           </form>
         </div>
       </dialog>

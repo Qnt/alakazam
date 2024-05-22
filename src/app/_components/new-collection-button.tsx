@@ -6,7 +6,6 @@ import NewCollectionModal from "./new-collection-modal";
 
 export default function NewCollectionButton() {
   const dialogRef = useRef<HTMLDialogElement>(null);
-
   const [modalKey, setModalKey] = useState(() => nanoid());
 
   const resetKey = () => {
