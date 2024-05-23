@@ -1,22 +1,21 @@
-import { Collection } from "@prisma/client";
+import { type Collection } from "@prisma/client";
 import Link from "next/link";
+import CollectionControls from "./collection-controls";
 
-type CollectionCardProps = {
+export default function CollectionCard({
+  collection,
+}: {
   collection: Collection;
-};
-
-export default function CollectionCard({ collection }: CollectionCardProps) {
+}) {
   return (
-    <Link href={`/collections/${collection.id}`} className="cursor-pointer">
-      <div className="card card-compact bg-neutral text-neutral-content shadow-xl md:max-w-72">
-        <div className="card-body">
+    <div className="card card-compact bg-neutral text-neutral-content shadow-xl md:max-w-72">
+      <div className="card-body">
+        <Link href={`/collections/${collection.id}`} className="link">
           <h2 className="card-title">{collection.name}</h2>
-          {collection.description && <p>{collection.description}</p>}
-          {/* <div className="card-actions justify-center">
-            <button className="btn btn-accent">Начать</button>
-          </div> */}
-        </div>
+        </Link>
+        {collection.description && <p>{collection.description}</p>}
+        <CollectionControls collection={collection} />
       </div>
-    </Link>
+    </div>
   );
 }

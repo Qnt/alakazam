@@ -1,29 +1,16 @@
 "use client";
 
 import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
-import { useFormState, useFormStatus } from "react-dom";
+import { createPortal, useFormState } from "react-dom";
 import { createCollection, type FormState } from "../actions";
+import ButtonSubmit from "./ui/button-submit";
 
 export type CollectionModalProps = {
   resetKey: () => void;
 };
 
-const SubmitButton = () => {
-  const { pending } = useFormStatus();
-
-  return (
-    <button className="btn btn-primary" disabled={pending}>
-      {pending ? (
-        <span className="loading loading-spinner loading-md"></span>
-      ) : (
-        <span>Создать</span>
-      )}
-    </button>
-  );
-};
-
 const NewCollectionModal = forwardRef<HTMLDialogElement, CollectionModalProps>(
-  ({ resetKey }, dialogRef) => {
+  function NewCollectionModal({ resetKey }, dialogRef) {
     const initFormState: FormState = { success: false, message: "" };
     const [formState, formAction] = useFormState(
       createCollection,
@@ -37,9 +24,9 @@ const NewCollectionModal = forwardRef<HTMLDialogElement, CollectionModalProps>(
         innerDialogRef.current?.close();
         resetKey();
       }
-    }, [formState]);
+    }, [formState, resetKey]);
 
-    return (
+    return createPortal(
       <dialog
         id="form_modal"
         className="modal modal-bottom sm:modal-middle"
@@ -56,6 +43,7 @@ const NewCollectionModal = forwardRef<HTMLDialogElement, CollectionModalProps>(
             ✕
           </button>
           <form className="form-control gap-4" action={formAction}>
+            {!formState.success && <p>{formState.message}</p>}
             <div>
               <label className="form-control w-full">
                 <div className="label">
@@ -89,12 +77,12 @@ const NewCollectionModal = forwardRef<HTMLDialogElement, CollectionModalProps>(
                 />
               </label>
             </div>
-            <SubmitButton />
+            <ButtonSubmit className="btn btn-primary">Создать</ButtonSubmit>
           </form>
         </div>
-      </dialog>
+      </dialog>,
+      document.body,
     );
   },
 );
-
 export default NewCollectionModal;

@@ -1,7 +1,7 @@
 "use server";
 
 import { auth } from "@clerk/nextjs/server";
-import { type Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { type z } from "zod";
 import { db } from "~/server/db";
@@ -20,7 +20,7 @@ export type FormState = {
 };
 
 export async function createCollection(
-  prevState: FormState,
+  _prevState: FormState,
   formData: FormData,
 ) {
   const { userId } = auth();
@@ -45,15 +45,30 @@ export async function createCollection(
     };
   }
 
-  await db.collection.create({
-    data: {
-      name: validatedFields.data.name,
-      description: validatedFields.data.description,
-      userId: validatedFields.data.userId,
-    },
-  });
-
-  revalidatePath("/");
+  try {
+    await db.collection.create({
+      data: {
+        name: validatedFields.data.name,
+        description: validatedFields.data.description,
+        userId: validatedFields.data.userId,
+      },
+    });
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === "P2002") {
+        console.error(
+          "There is a unique constraint violation, a new collection cannot be created with this name",
+        );
+        return {
+          success: false,
+          message:
+            "Коллекция с таким именем уже существует. Пожалуйста, выберите другое имя",
+        };
+      }
+    }
+  } finally {
+    revalidatePath("/collectiions");
+  }
 
   return {
     success: true,
@@ -61,18 +76,37 @@ export async function createCollection(
   };
 }
 
-// export async function deleteCollection( ) {
-//   const { userId } = auth();
+export async function deleteCollection(id: number) {
+  const { userId } = auth();
 
-//   if (!userId) {
-//     throw new Error("You must be signed in to perform this action");
-//   }
+  if (!userId) {
+    throw new Error("You must be signed in to perform this action");
+  }
 
-//   revalidatePath("/");
+  const deleteCards = db.card.deleteMany({
+    where: {
+      collectionId: Number(id),
+    },
+  });
 
-//   return {
-//     success: true,
-//     message: `Коллекция "${validatedFields.data.name}" удалена`,
-//   };
+  const deleteCollection = db.collection.delete({
+    where: {
+      id: Number(id),
+    },
+  });
 
-// }
+  try {
+    await db.$transaction([deleteCards, deleteCollection]);
+  } catch (error) {
+    console.error("Something went wrong while deleting a collection");
+    return {
+      message: "Ошибка при удалении коллекции",
+    };
+  } finally {
+    revalidatePath("/collections");
+  }
+
+  return {
+    message: "Коллекция удалена",
+  };
+}

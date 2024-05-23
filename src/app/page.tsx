@@ -1,5 +1,5 @@
 import { SignInButton, SignedIn, SignedOut } from "@clerk/nextjs";
-import CollectionList from "./_components/collection-list";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -23,7 +23,13 @@ export default function HomePage() {
         </div>
       </SignedOut>
       <SignedIn>
-        <CollectionList />
+        <nav>
+          <ul>
+            <li>
+              <Link href="/collections">Коллекции карт</Link>
+            </li>
+          </ul>
+        </nav>
       </SignedIn>
     </main>
   );

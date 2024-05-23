@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { type Prisma } from "@prisma/client";
 import { z } from "zod";
 
 export const schema = z.object({
@@ -7,6 +7,6 @@ export const schema = z.object({
   }),
   description: z.string().trim().nullable().optional(),
   userId: z.string().trim().min(1, {
-    message: 'userId не может быть пустым'
+    message: "userId не может быть пустым",
   }),
 }) satisfies z.ZodType<Prisma.CollectionCreateWithoutCardsInput>;
