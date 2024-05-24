@@ -3,9 +3,10 @@
 import { auth } from "@clerk/nextjs/server";
 import { Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { type z } from "zod";
 import { db } from "~/server/db";
-import { schema } from "./schemas/collection-schema";
+import { schema } from "../app/schemas/collection-schema";
 
 schema satisfies z.ZodType<Prisma.CollectionCreateWithoutCardsInput>;
 
@@ -102,9 +103,9 @@ export async function deleteCollection(id: number) {
     return {
       message: "Ошибка при удалении коллекции",
     };
-  } finally {
-    revalidatePath("/collections");
   }
+
+  redirect("/collections");
 
   return {
     message: "Коллекция удалена",

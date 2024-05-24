@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function TopNav() {
   return (
-    <nav className="navbar bg-base-100">
+    <nav className="navbar sticky top-0 z-50 bg-base-100">
       <div className="flex-1">
         <Link href="/" className="btn btn-ghost text-xl">
           Alakazam

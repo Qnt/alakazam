@@ -1,6 +1,5 @@
 import { type Collection } from "@prisma/client";
 import Link from "next/link";
-import CollectionControls from "./collection-controls";
 
 export default function CollectionCard({
   collection,
@@ -8,14 +7,16 @@ export default function CollectionCard({
   collection: Collection;
 }) {
   return (
-    <div className="card card-compact bg-neutral text-neutral-content shadow-xl md:max-w-72">
-      <div className="card-body">
-        <Link href={`/collections/${collection.id}`} className="link">
+    <Link
+      href={`/collections/${collection.id}`}
+      className="cursor-pointer focus:rounded-2xl"
+    >
+      <div className="card card-compact bg-neutral text-neutral-content shadow-xl md:max-w-72">
+        <div className="card-body">
           <h2 className="card-title">{collection.name}</h2>
-        </Link>
-        {collection.description && <p>{collection.description}</p>}
-        <CollectionControls collection={collection} />
+          {collection.description && <p>{collection.description}</p>}
+        </div>
       </div>
-    </div>
+    </Link>
   );
 }

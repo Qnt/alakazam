@@ -3,7 +3,7 @@
 import { type Collection } from "@prisma/client";
 import { forwardRef, useImperativeHandle, useRef, type ReactNode } from "react";
 import { createPortal } from "react-dom";
-import { deleteCollection } from "../actions";
+import { deleteCollection } from "~/server/actions";
 import ButtonSubmit from "./ui/button-submit";
 
 type ModalConfirmProps = {
@@ -31,7 +31,7 @@ const ModalConfirm = forwardRef<HTMLDialogElement, ModalConfirmProps>(
           >
             ✕
           </button>
-          <form
+          {/* <form
             className="form-control gap-4"
             action={deleteCollection.bind(null, collection.id)}
           >
@@ -47,7 +47,7 @@ const ModalConfirm = forwardRef<HTMLDialogElement, ModalConfirmProps>(
             >
               Отменить
             </button>
-          </form>
+          </form> */}
         </div>
       </dialog>,
       document.body,
