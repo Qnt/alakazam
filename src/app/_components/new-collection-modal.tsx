@@ -98,6 +98,15 @@ const NewCollectionModal = forwardRef<HTMLDialogElement, CollectionModalProps>(
                   <ButtonSubmit className="btn btn-primary">
                     Создать
                   </ButtonSubmit>
+                  <button
+                    className="btn btn-ghost"
+                    onClick={() => {
+                      innerDialogRef.current?.close();
+                      resetKey();
+                    }}
+                  >
+                    Отмена
+                  </button>
                 </form>
               </div>
             </dialog>,

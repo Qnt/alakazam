@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useFormState } from "react-dom";
 import { editCollection, type FormState } from "~/server/actions";
 import ButtonSubmit from "./ui/button-submit";
@@ -54,6 +55,9 @@ export default function EditForm({ id }: { id: number }) {
         </label>
       </div>
       <ButtonSubmit className="btn btn-primary">Сохранить</ButtonSubmit>
+      <Link className="btn btn-ghost" href={`/collections/${id}`}>
+        Отмена
+      </Link>
     </form>
   );
 }
