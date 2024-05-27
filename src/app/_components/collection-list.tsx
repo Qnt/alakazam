@@ -5,7 +5,7 @@ export default async function CollectionList() {
   const collections = await getMyCollections();
 
   return (
-    <div className="mt-20 flex flex-col gap-4">
+    <div className="mt-28 flex flex-col gap-4">
       {collections.length === 0 && (
         <div className="flex h-full flex-col items-center justify-center">
           <p>Список коллекций пуст.</p>

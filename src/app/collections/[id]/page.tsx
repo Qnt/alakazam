@@ -1,5 +1,6 @@
-import { EllipsisVertical, SquarePen, Trash2 } from "lucide-react";
+import { EllipsisVertical, Home, SquarePen, Trash2 } from "lucide-react";
 import Link from "next/link";
+import Breadcrumbs from "~/app/_components/ui/breadcrumbs";
 import ButtonSubmit from "~/app/_components/ui/button-submit";
 import { deleteCollection } from "~/server/actions";
 import { getCollectionById } from "~/server/queries";
@@ -10,6 +11,17 @@ export default async function Page({ params }: { params: { id: string } }) {
   return (
     <>
       <section className="flex flex-col justify-between gap-2 lg:flex-row">
+        <Breadcrumbs
+          breadcrumbs={[
+            { label: <Home size={20} />, href: "/", active: false },
+            { label: "Коллекции", href: "/collections", active: false },
+            {
+              label: collection.name,
+              href: `/collections/${collection.id}`,
+              active: true,
+            },
+          ]}
+        />
         <form
           className="flex items-center justify-between gap-4"
           action={deleteCollection.bind(null, collection.id)}
@@ -30,7 +42,7 @@ export default async function Page({ params }: { params: { id: string } }) {
                   href={`/collections/${collection.id}/edit`}
                   className="btn btn-ghost justify-between"
                 >
-                  <span>Редактировать </span>
+                  <span>Изменить </span>
                   <SquarePen />
                 </Link>
               </li>
