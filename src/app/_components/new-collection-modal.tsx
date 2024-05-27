@@ -17,7 +17,7 @@ export type CollectionModalProps = {
 
 const NewCollectionModal = forwardRef<HTMLDialogElement, CollectionModalProps>(
   function NewCollectionModal({ resetKey }, dialogRef) {
-    const [mounted, setMounted] = useState(false);
+    const [isMounted, setMounted] = useState(false);
     const initFormState: FormState = { success: false, message: "" };
     const [formState, formAction] = useFormState(
       createCollection,
@@ -28,9 +28,6 @@ const NewCollectionModal = forwardRef<HTMLDialogElement, CollectionModalProps>(
 
     useEffect(() => {
       setMounted(true);
-    }, []);
-
-    useEffect(() => {
       if (formState.success) {
         innerDialogRef.current?.close();
         resetKey();
@@ -39,12 +36,12 @@ const NewCollectionModal = forwardRef<HTMLDialogElement, CollectionModalProps>(
 
     return (
       <>
-        {mounted &&
+        {isMounted &&
           createPortal(
             <dialog
               id="form_modal"
               className="modal modal-bottom sm:modal-middle"
-              ref={innerDialogRef}
+              ref={dialogRef}
             >
               <div className="modal-box">
                 <button

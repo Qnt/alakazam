@@ -3,10 +3,10 @@ import NewCollectionButton from "../_components/new-collection-button";
 
 export default function Page() {
   return (
-    <div className="flex flex-col gap-2">
-      <div className="fixed top-16 z-10 flex flex-row gap-2 bg-base-100 py-2">
+    <div className="flex flex-col">
+      <div className="fixed inset-x-4 z-10 flex gap-2 bg-base-100 py-2">
         <form className="form-control grow">
-          <label className="input input-bordered flex items-center gap-2">
+          <label className="input input-bordered flex grow items-center gap-2">
             <input type="text" className="grow" placeholder="Поиск" />
             <svg
               xmlns="http://www.w3.org/2000/svg"
