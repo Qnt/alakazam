@@ -6,7 +6,7 @@ export async function getMyCollections() {
   const { userId } = auth();
 
   if (!userId) {
-    throw new Error("Unauthorized");
+    throw new Error("You must be signed in to perform this action");
   }
 
   const collections = await db.collection.findMany({
@@ -25,7 +25,7 @@ export async function getCollectionById(id: number) {
   const { userId } = auth();
 
   if (!userId) {
-    throw new Error("Unauthorized");
+    throw new Error("You must be signed in to perform this action");
   }
 
   const collection = await db.collection.findFirst({
