@@ -3,13 +3,13 @@
 import Link from "next/link";
 import { type Collection } from "prisma/generated/zod";
 import { useFormState } from "react-dom";
-import { editCollection, type CollectionFormState } from "~/server/queries";
+import { updateCollection, type CollectionFormState } from "~/server/queries";
 import ButtonSubmit from "./ui/button-submit";
 
 export default function EditForm({ collection }: { collection: Collection }) {
   const initFormState: CollectionFormState = { success: false, message: "" };
   const [formState, formAction] = useFormState(
-    editCollection.bind(null, collection.id),
+    updateCollection.bind(null, collection.id),
     initFormState,
   );
 

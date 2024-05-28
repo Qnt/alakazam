@@ -1,10 +1,11 @@
+import { type Collection } from "prisma/generated/zod";
 import { getCardsByCollectionId } from "~/server/queries";
 import CardCard from "./card-card";
 
 export default async function CardList({
   collectionId,
 }: {
-  collectionId: string;
+  collectionId: Collection["id"];
 }) {
   const cards = await getCardsByCollectionId(collectionId);
 
@@ -19,7 +20,7 @@ export default async function CardList({
         <ul>
           {cards.map((c) => (
             <li key={c.id}>
-              <CardCard card={c} />
+              <CardCard card={c} collectionId={collectionId} />
             </li>
           ))}
         </ul>

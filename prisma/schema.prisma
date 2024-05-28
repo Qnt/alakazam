@@ -34,9 +34,11 @@ model Card {
   collection   Collection @relation(fields: [collectionId], references: [id])
   collectionId String
   box          Box        @default(BEGINNER)
+  userId       String
 
-  @@unique([question])
+  @@unique([question, collectionId, userId])
   @@index([collectionId])
+  @@index([userId])
 }
 
 enum Box {

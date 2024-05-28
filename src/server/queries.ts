@@ -1,11 +1,13 @@
 "use server";
 import { auth } from "@clerk/nextjs/server";
-import { Prisma } from "@prisma/client";
+import { Prisma, type Card } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import {
   CardCreateInputSchema,
+  CardUpdateInputSchema,
   CollectionCreateWithoutCardsInputSchema,
+  CollectionUpdateWithoutCardsInputSchema,
   type Collection,
 } from "prisma/generated/zod";
 import "server-only";
@@ -65,6 +67,10 @@ export async function getCollectionById(id: string) {
       userId,
     },
   });
+
+  if (collection?.userId !== userId) {
+    throw new Error("Unauthorized access");
+  }
 
   if (!collection) {
     throw new Error("Collection not found");
@@ -146,7 +152,7 @@ export async function createCollection(
   };
 }
 
-export async function editCollection(
+export async function updateCollection(
   id: string,
   _prevState: FormState,
   formData: FormData,
@@ -159,7 +165,7 @@ export async function editCollection(
 
   const description = formData.get("description");
 
-  const validatedFields = CollectionCreateWithoutCardsInputSchema.safeParse({
+  const validatedFields = CollectionUpdateWithoutCardsInputSchema.safeParse({
     name: formData.get("name"),
     description: description === "" ? null : description,
     userId,
@@ -188,7 +194,7 @@ export async function editCollection(
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === "P2002") {
         console.error(
-          "There is a unique constraint violation, a new collection cannot be created with this name",
+          "There is a unique constraint violation, a collection with this name already exists.",
         );
         return {
           success: false,
@@ -249,6 +255,7 @@ export async function createCard(
     answer: formData.get("answer"),
     box: formData.get("box"),
     collection: { connect: { id: collectionId } },
+    userId: userId,
   });
 
   if (!validatedFields.success) {
@@ -265,6 +272,7 @@ export async function createCard(
         question: validatedFields.data.question,
         answer: validatedFields.data.answer,
         box: validatedFields.data.box,
+        userId: validatedFields.data.userId,
         collection: validatedFields.data.collection,
       },
     });
@@ -282,6 +290,11 @@ export async function createCard(
             "A card with this question already exists. Please choose another question",
         };
       }
+      console.error("An unexpected error occurred: ", error);
+      return {
+        success: false,
+        message: "An unexpected error occurred. Please try again later.",
+      };
     }
   }
 
@@ -291,4 +304,86 @@ export async function createCard(
     success: true,
     message: `The card has been added`,
   };
+}
+
+export async function updateCard(
+  cardId: string,
+  collectionId: string,
+  _prevState: FormState,
+  formData: FormData,
+) {
+  const { userId } = auth();
+
+  if (!userId) {
+    throw new Error("You must be signed in to perform this action");
+  }
+
+  const validatedFields = CardUpdateInputSchema.safeParse({
+    question: formData.get("question"),
+    answer: formData.get("answer"),
+    box: formData.get("box"),
+    collection: { connect: { id: collectionId } },
+  });
+
+  if (!validatedFields.success) {
+    return {
+      success: false,
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: "An error occurred while changing a card",
+    };
+  }
+
+  try {
+    await db.card.update({
+      where: {
+        id: cardId,
+      },
+      data: {
+        question: validatedFields.data.question,
+        answer: validatedFields.data.answer,
+        box: validatedFields.data.box,
+        collection: validatedFields.data.collection,
+      },
+    });
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === "P2002") {
+        console.error(
+          "There is a unique constraint violation, a card with this question already exists",
+        );
+        return {
+          success: false,
+          message:
+            "A card with this question already exists. Please choose another question",
+        };
+      }
+    }
+  }
+
+  redirect(`/collections/${collectionId}`);
+}
+
+export async function getCardById(id: Card["id"]) {
+  const { userId } = auth();
+
+  if (!userId) {
+    throw new Error("You must be signed in to perform this action");
+  }
+
+  const card = await db.card.findFirst({
+    where: {
+      id,
+      userId,
+    },
+  });
+
+  if (card?.userId !== userId) {
+    throw new Error("Unauthorized access");
+  }
+
+  if (!card) {
+    throw new Error("Card not found");
+  }
+
+  return card;
 }
