@@ -201,15 +201,24 @@ export const CardOrderByWithRelationInputSchema: z.ZodType<Prisma.CardOrderByWit
   collection: z.lazy(() => CollectionOrderByWithRelationInputSchema).optional()
 }).strict();
 
-export const CardWhereUniqueInputSchema: z.ZodType<Prisma.CardWhereUniqueInput> = z.object({
-  id: z.string().cuid()
-})
+export const CardWhereUniqueInputSchema: z.ZodType<Prisma.CardWhereUniqueInput> = z.union([
+  z.object({
+    id: z.string().cuid(),
+    question: z.string().trim().min(1, { message: "The question can't be empty" })
+  }),
+  z.object({
+    id: z.string().cuid(),
+  }),
+  z.object({
+    question: z.string().trim().min(1, { message: "The question can't be empty" }),
+  }),
+])
 .and(z.object({
   id: z.string().cuid().optional(),
+  question: z.string().trim().min(1, { message: "The question can't be empty" }).optional(),
   AND: z.union([ z.lazy(() => CardWhereInputSchema),z.lazy(() => CardWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => CardWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => CardWhereInputSchema),z.lazy(() => CardWhereInputSchema).array() ]).optional(),
-  question: z.union([ z.lazy(() => StringFilterSchema),z.string().trim().min(1, { message: "The question can't be empty" }) ]).optional(),
   answer: z.union([ z.lazy(() => StringFilterSchema),z.string().trim().min(1, { message: "The answer can't be empty" }) ]).optional(),
   collectionId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   box: z.union([ z.lazy(() => EnumBoxFilterSchema),z.lazy(() => BoxSchema) ]).optional(),

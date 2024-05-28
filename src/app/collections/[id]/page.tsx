@@ -40,7 +40,7 @@ export default async function Page({ params }: { params: { id: string } }) {
             </svg>
           </label>
         </form>
-        <NewCardButton />
+        <NewCardButton collectionId={collection.id} />
       </div>
       <form
         className="flex items-center justify-between gap-4"
@@ -75,7 +75,6 @@ export default async function Page({ params }: { params: { id: string } }) {
           </ul>
         </div>
       </form>
-      {/* <NewCardButton /> */}
       <CardList collectionId={params.id} />
     </div>
   );

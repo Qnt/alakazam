@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import {
   CardCreateInputSchema,
   CollectionCreateWithoutCardsInputSchema,
+  type Collection,
 } from "prisma/generated/zod";
 import "server-only";
 import { type z } from "zod";
@@ -136,7 +137,7 @@ export async function createCollection(
       }
     }
   } finally {
-    revalidatePath("/collectiions");
+    revalidatePath("/collections");
   }
 
   return {
@@ -232,7 +233,11 @@ export async function deleteCollection(id: string) {
   redirect("/collections");
 }
 
-export async function createCard(_prevState: FormState, formData: FormData) {
+export async function createCard(
+  collectionId: Collection["id"],
+  _prevState: FormState,
+  formData: FormData,
+) {
   const { userId } = auth();
 
   if (!userId) {
@@ -243,7 +248,7 @@ export async function createCard(_prevState: FormState, formData: FormData) {
     question: formData.get("question"),
     answer: formData.get("answer"),
     box: formData.get("box"),
-    collection: formData.get("collection"),
+    collection: { connect: { id: collectionId } },
   });
 
   if (!validatedFields.success) {
@@ -255,7 +260,7 @@ export async function createCard(_prevState: FormState, formData: FormData) {
   }
 
   try {
-    await db.card.create({
+    const card = await db.card.create({
       data: {
         question: validatedFields.data.question,
         answer: validatedFields.data.answer,
@@ -263,11 +268,13 @@ export async function createCard(_prevState: FormState, formData: FormData) {
         collection: validatedFields.data.collection,
       },
     });
+
+    console.log(card);
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === "P2002") {
         console.error(
-          "There is a unique constraint violation, a new collection cannot be created with this name",
+          "There is a unique constraint violation, a new card cannot be created with this question",
         );
         return {
           success: false,
@@ -276,9 +283,9 @@ export async function createCard(_prevState: FormState, formData: FormData) {
         };
       }
     }
-  } finally {
-    revalidatePath("/collectiions");
   }
+
+  revalidatePath(`/collections/${collectionId}`);
 
   return {
     success: true,

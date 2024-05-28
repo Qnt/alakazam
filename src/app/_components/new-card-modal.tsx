@@ -1,5 +1,6 @@
 "use client";
 
+import { BoxSchema, type Collection } from "prisma/generated/zod";
 import {
   forwardRef,
   useEffect,
@@ -8,19 +9,20 @@ import {
   useState,
 } from "react";
 import { createPortal, useFormState } from "react-dom";
-import { createCollection, type CollectionFormState } from "~/server/queries";
+import { createCard, type CardFormState } from "~/server/queries";
 import ButtonSubmit from "./ui/button-submit";
 
-export type CollectionModalProps = {
+export type CardModalProps = {
+  collectionId: Collection["id"];
   resetKey: () => void;
 };
 
-const NewCollectionModal = forwardRef<HTMLDialogElement, CollectionModalProps>(
-  function NewCollectionModal({ resetKey }, dialogRef) {
+const NewCardModal = forwardRef<HTMLDialogElement, CardModalProps>(
+  function NewCardModal({ collectionId, resetKey }, dialogRef) {
     const [isMounted, setMounted] = useState(false);
-    const initFormState: CollectionFormState = { success: false, message: "" };
+    const initFormState: CardFormState = { success: false, message: "" };
     const [formState, formAction] = useFormState(
-      createCollection,
+      createCard.bind(null, collectionId),
       initFormState,
     );
     const innerDialogRef = useRef<HTMLDialogElement>(null);
@@ -34,12 +36,13 @@ const NewCollectionModal = forwardRef<HTMLDialogElement, CollectionModalProps>(
       }
     }, [formState, resetKey]);
 
+    console.log(formState);
     return (
       <>
         {isMounted &&
           createPortal(
             <dialog
-              id="collaction_form_modal"
+              id="card_form_modal"
               className="modal modal-bottom sm:modal-middle"
               ref={dialogRef}
             >
@@ -53,19 +56,19 @@ const NewCollectionModal = forwardRef<HTMLDialogElement, CollectionModalProps>(
                 >
                   ✕
                 </button>
-                <h2 className="text-lg font-semibold">New Collection</h2>
+                <h2 className="text-lg font-semibold">New Card</h2>
                 <form className="form-control gap-4" action={formAction}>
-                  {/* {!formState.success && <p>{formState.message}</p>} */}
                   <div>
+                    {!formState.success && <p>{formState.message}</p>}
                     <label className="form-control w-full">
                       <div className="label">
-                        <span className="label-text">Name</span>
+                        <span className="label-text">Question</span>
                       </div>
                       <input
                         type="text"
-                        placeholder="Collection"
+                        placeholder="Question"
                         className="input input-bordered w-full"
-                        name="name"
+                        name="question"
                         aria-describedby="user-error"
                         autoFocus
                       />
@@ -75,7 +78,7 @@ const NewCollectionModal = forwardRef<HTMLDialogElement, CollectionModalProps>(
                       aria-live="polite"
                       aria-atomic="true"
                     >
-                      {formState?.errors?.name?.map((error: string) => (
+                      {formState?.errors?.question?.map((error: string) => (
                         <p className="mt-2 text-sm text-red-500" key={error}>
                           {error}
                         </p>
@@ -83,16 +86,40 @@ const NewCollectionModal = forwardRef<HTMLDialogElement, CollectionModalProps>(
                     </div>
                     <label className="form-control w-full">
                       <div className="label">
-                        <span className="label-text">
-                          Description (optional)
-                        </span>
+                        <span className="label-text">Answer</span>
                       </div>
                       <input
                         type="text"
-                        placeholder="Description"
+                        placeholder="Answer"
                         className="input input-bordered w-full"
-                        name="description"
+                        name="answer"
+                        aria-describedby="user-error"
                       />
+                    </label>
+                    <div
+                      id="customer-error"
+                      aria-live="polite"
+                      aria-atomic="true"
+                    >
+                      {formState?.errors?.answer?.map((error: string) => (
+                        <p className="mt-2 text-sm text-red-500" key={error}>
+                          {error}
+                        </p>
+                      ))}
+                    </div>
+                    <label className="form-control w-full">
+                      <div className="label">
+                        <span className="label-text">Box</span>
+                      </div>
+                      <select
+                        className="select select-bordered w-full max-w-xs"
+                        name="box"
+                        defaultValue={BoxSchema.Values.BEGINNER}
+                      >
+                        {Object.keys(BoxSchema.Values).map((b) => (
+                          <option key={b}>{b}</option>
+                        ))}
+                      </select>
                     </label>
                   </div>
                   <div className="flex-re flex flex-col gap-4 md:flex-row-reverse">
@@ -121,4 +148,4 @@ const NewCollectionModal = forwardRef<HTMLDialogElement, CollectionModalProps>(
     );
   },
 );
-export default NewCollectionModal;
+export default NewCardModal;
