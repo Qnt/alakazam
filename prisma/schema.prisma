@@ -5,6 +5,10 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator zod {
+  provider = "zod-prisma-types"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -13,9 +17,9 @@ datasource db {
 }
 
 model Collection {
-  id          Int     @id @default(autoincrement())
-  name        String
-  description String?
+  id          String  @id @default(cuid())
+  name        String /// @zod.string.trim().min(1, { message: "The name can't be empty" })
+  description String? /// @zod.string.trim()
   userId      String
   cards       Card[]
 
@@ -24,12 +28,18 @@ model Collection {
 }
 
 model Card {
-  id           Int        @id @default(autoincrement())
-  question     String
-  answer       String
+  id           String     @id @default(cuid())
+  question     String /// @zod.string.trim().min(1, { message: "The question can't be empty" })
+  answer       String /// @zod.string.trim().min(1, { message: "The answer can't be empty" })
   collection   Collection @relation(fields: [collectionId], references: [id])
-  collectionId Int
-  box          Int
+  collectionId String
+  box          Box        @default(BEGINNER)
 
   @@index([collectionId])
+}
+
+enum Box {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
 }

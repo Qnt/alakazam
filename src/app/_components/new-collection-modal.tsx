@@ -8,7 +8,7 @@ import {
   useState,
 } from "react";
 import { createPortal, useFormState } from "react-dom";
-import { createCollection, type FormState } from "~/server/actions";
+import { createCollection, type CollectionFormState } from "~/server/actions";
 import ButtonSubmit from "./ui/button-submit";
 
 export type CollectionModalProps = {
@@ -18,7 +18,7 @@ export type CollectionModalProps = {
 const NewCollectionModal = forwardRef<HTMLDialogElement, CollectionModalProps>(
   function NewCollectionModal({ resetKey }, dialogRef) {
     const [isMounted, setMounted] = useState(false);
-    const initFormState: FormState = { success: false, message: "" };
+    const initFormState: CollectionFormState = { success: false, message: "" };
     const [formState, formAction] = useFormState(
       createCollection,
       initFormState,

@@ -4,7 +4,7 @@ import Breadcrumbs from "~/app/_components/ui/breadcrumbs";
 import { getCollectionById } from "~/server/queries";
 
 export default async function Page({ params }: { params: { id: string } }) {
-  const collection = await getCollectionById(Number(params.id));
+  const collection = await getCollectionById(params.id);
 
   return (
     <div className="flex flex-col justify-between gap-2 lg:flex-row">

@@ -21,7 +21,7 @@ export async function getMyCollections() {
   return collections;
 }
 
-export async function getCollectionById(id: number) {
+export async function getCollectionById(id: string) {
   const { userId } = auth();
 
   if (!userId) {
@@ -40,4 +40,20 @@ export async function getCollectionById(id: number) {
   }
 
   return collection;
+}
+
+export async function getCardsByCollectionId(id: string) {
+  const { userId } = auth();
+
+  if (!userId) {
+    throw new Error("You must be signed in to perform this action");
+  }
+
+  const cards = await db.card.findMany({
+    where: {
+      collectionId: id,
+    },
+  });
+
+  return cards;
 }

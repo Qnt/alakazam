@@ -1,63 +1,32 @@
 import { EllipsisVertical, Home, SquarePen, Trash2 } from "lucide-react";
 import Link from "next/link";
+import CardList from "~/app/_components/card-list";
+import NewCardButton from "~/app/_components/new-card-button";
 import Breadcrumbs from "~/app/_components/ui/breadcrumbs";
 import ButtonSubmit from "~/app/_components/ui/button-submit";
 import { deleteCollection } from "~/server/actions";
 import { getCollectionById } from "~/server/queries";
 
 export default async function Page({ params }: { params: { id: string } }) {
-  const collection = await getCollectionById(Number(params.id));
+  const collection = await getCollectionById(params.id);
 
   return (
-    <>
-      <section className="flex flex-col justify-between gap-2 lg:flex-row">
-        <Breadcrumbs
-          breadcrumbs={[
-            { label: <Home size={20} />, href: "/", active: false },
-            { label: "Коллекции", href: "/collections", active: false },
-            {
-              label: collection.name,
-              href: `/collections/${collection.id}`,
-              active: true,
-            },
-          ]}
-        />
-        <form
-          className="flex items-center justify-between gap-4"
-          action={deleteCollection.bind(null, collection.id)}
-        >
-          <h2 className="grow overflow-hidden whitespace-nowrap p-2 text-xl font-bold">
-            {collection.name}
-          </h2>
-          <div className="dropdown dropdown-end">
-            <div tabIndex={0} role="button">
-              <EllipsisVertical />
-            </div>
-            <ul
-              tabIndex={0}
-              className="menu dropdown-content z-[1] w-52 rounded-box bg-base-100 p-2 shadow"
-            >
-              <li>
-                <Link
-                  href={`/collections/${collection.id}/edit`}
-                  className="btn btn-ghost justify-between"
-                >
-                  <span>Изменить </span>
-                  <SquarePen />
-                </Link>
-              </li>
-              <li>
-                <ButtonSubmit className="btn btn-ghost justify-between text-error">
-                  <span>Удалить</span>
-                  <Trash2 />
-                </ButtonSubmit>
-              </li>
-            </ul>
-          </div>
-        </form>
-        <form>
-          <label className="input input-bordered flex items-center gap-2">
-            <input type="text" className="grow" placeholder="Search" />
+    <div className="flex flex-col justify-between gap-2 lg:flex-row">
+      <Breadcrumbs
+        breadcrumbs={[
+          { label: <Home size={20} />, href: "/", active: false },
+          { label: "Коллекции", href: "/collections", active: false },
+          {
+            label: collection.name,
+            href: `/collections/${collection.id}`,
+            active: true,
+          },
+        ]}
+      />
+      <div className="flex gap-2">
+        <form className="form-control grow">
+          <label className="input input-bordered flex grow items-center gap-2">
+            <input type="text" className="grow" placeholder="Поиск" />
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 16 16"
@@ -71,9 +40,44 @@ export default async function Page({ params }: { params: { id: string } }) {
               />
             </svg>
           </label>
-          {/* <NewCardButton /> */}
         </form>
-      </section>
-    </>
+        <NewCardButton />
+      </div>
+      <form
+        className="flex items-center justify-between gap-4"
+        action={deleteCollection.bind(null, collection.id)}
+      >
+        <h2 className="grow overflow-hidden whitespace-nowrap p-2 text-xl font-bold">
+          {collection.name}
+        </h2>
+        <div className="dropdown dropdown-end">
+          <div tabIndex={0} role="button">
+            <EllipsisVertical />
+          </div>
+          <ul
+            tabIndex={0}
+            className="menu dropdown-content z-[1] w-52 rounded-box bg-base-100 p-2 shadow"
+          >
+            <li>
+              <Link
+                href={`/collections/${collection.id}/edit`}
+                className="btn btn-ghost justify-between"
+              >
+                <span>Изменить</span>
+                <SquarePen />
+              </Link>
+            </li>
+            <li>
+              <ButtonSubmit className="btn btn-ghost justify-between text-error">
+                <span>Удалить</span>
+                <Trash2 />
+              </ButtonSubmit>
+            </li>
+          </ul>
+        </div>
+      </form>
+      {/* <NewCardButton /> */}
+      <CardList collectionId={params.id} />
+    </div>
   );
 }

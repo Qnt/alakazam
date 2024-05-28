@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import { useFormState } from "react-dom";
-import { editCollection, type FormState } from "~/server/actions";
+import { editCollection, type CollectionFormState } from "~/server/actions";
 import ButtonSubmit from "./ui/button-submit";
 
 export default function EditForm({ id }: { id: number }) {
-  const initFormState: FormState = { success: false, message: "" };
+  const initFormState: CollectionFormState = { success: false, message: "" };
   const [formState, formAction] = useFormState(
     editCollection.bind(null, id),
     initFormState,
