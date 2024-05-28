@@ -11,20 +11,20 @@ export default async function Page({ params }: { params: { id: string } }) {
       <Breadcrumbs
         breadcrumbs={[
           { label: <Home size={20} />, href: "/", active: false },
-          { label: "Коллекции", href: "/collections", active: false },
+          { label: "Collections", href: "/collections", active: false },
           {
             label: collection.name,
             href: `/collections/${collection.id}`,
             active: false,
           },
           {
-            label: "Изменение",
+            label: "Edit",
             href: `/collections/${collection.id}/edit`,
             active: true,
           },
         ]}
       />
-      <EditForm id={Number(params.id)} />
+      <EditForm collection={collection} />
     </div>
   );
 }

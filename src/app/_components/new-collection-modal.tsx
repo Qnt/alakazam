@@ -8,7 +8,7 @@ import {
   useState,
 } from "react";
 import { createPortal, useFormState } from "react-dom";
-import { createCollection, type CollectionFormState } from "~/server/actions";
+import { createCollection, type CollectionFormState } from "~/server/queries";
 import ButtonSubmit from "./ui/button-submit";
 
 export type CollectionModalProps = {
@@ -53,17 +53,17 @@ const NewCollectionModal = forwardRef<HTMLDialogElement, CollectionModalProps>(
                 >
                   ✕
                 </button>
-                <h2 className="text-lg font-semibold">Новая коллекция</h2>
+                <h2 className="text-lg font-semibold">New Collection</h2>
                 <form className="form-control gap-4" action={formAction}>
                   {/* {!formState.success && <p>{formState.message}</p>} */}
                   <div>
                     <label className="form-control w-full">
                       <div className="label">
-                        <span className="label-text">Название</span>
+                        <span className="label-text">Name</span>
                       </div>
                       <input
                         type="text"
-                        placeholder="Коллекция"
+                        placeholder="Collection"
                         className="input input-bordered w-full"
                         name="name"
                         aria-describedby="user-error"
@@ -84,12 +84,12 @@ const NewCollectionModal = forwardRef<HTMLDialogElement, CollectionModalProps>(
                     <label className="form-control w-full">
                       <div className="label">
                         <span className="label-text">
-                          Описание (опционально)
+                          Description (optional)
                         </span>
                       </div>
                       <input
                         type="text"
-                        placeholder="Описание"
+                        placeholder="Description"
                         className="input input-bordered w-full"
                         name="description"
                       />
@@ -97,7 +97,7 @@ const NewCollectionModal = forwardRef<HTMLDialogElement, CollectionModalProps>(
                   </div>
                   <div className="flex-re flex flex-col gap-4 md:flex-row-reverse">
                     <ButtonSubmit className="btn btn-primary">
-                      Создать
+                      Create
                     </ButtonSubmit>
                     <button
                       className="btn btn-ghost"
@@ -106,7 +106,7 @@ const NewCollectionModal = forwardRef<HTMLDialogElement, CollectionModalProps>(
                         resetKey();
                       }}
                     >
-                      Отмена
+                      Cancel
                     </button>
                   </div>
                 </form>

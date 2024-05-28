@@ -8,7 +8,7 @@ export default async function CollectionList() {
     <div className="mt-28 flex flex-col gap-4">
       {collections.length === 0 && (
         <div className="flex h-full flex-col items-center justify-center">
-          <p>Список коллекций пуст.</p>
+          <p>You don&apos;t have any collections yet.</p>
         </div>
       )}
       {collections.length > 0 && (

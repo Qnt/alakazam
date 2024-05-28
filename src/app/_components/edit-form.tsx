@@ -1,14 +1,15 @@
 "use client";
 
 import Link from "next/link";
+import { type Collection } from "prisma/generated/zod";
 import { useFormState } from "react-dom";
-import { editCollection, type CollectionFormState } from "~/server/actions";
+import { editCollection, type CollectionFormState } from "~/server/queries";
 import ButtonSubmit from "./ui/button-submit";
 
-export default function EditForm({ id }: { id: number }) {
+export default function EditForm({ collection }: { collection: Collection }) {
   const initFormState: CollectionFormState = { success: false, message: "" };
   const [formState, formAction] = useFormState(
-    editCollection.bind(null, id),
+    editCollection.bind(null, collection.id),
     initFormState,
   );
 
@@ -24,15 +25,15 @@ export default function EditForm({ id }: { id: number }) {
         )}
         <label className="form-control w-full">
           <div className="label">
-            <span className="label-text">Название</span>
+            <span className="label-text">Name</span>
           </div>
           <input
             type="text"
-            placeholder="Коллекция"
+            placeholder="Collection"
             className="input input-bordered w-full"
             name="name"
             aria-describedby="user-error"
-            autoFocus
+            defaultValue={collection.name}
           />
         </label>
         <div id="customer-error" aria-live="polite" aria-atomic="true">
@@ -44,19 +45,20 @@ export default function EditForm({ id }: { id: number }) {
         </div>
         <label className="form-control w-full">
           <div className="label">
-            <span className="label-text">Описание (опционально)</span>
+            <span className="label-text">Description (optional)</span>
           </div>
           <input
             type="text"
-            placeholder="Описание"
+            placeholder="Description"
             className="input input-bordered w-full"
             name="description"
+            defaultValue={collection.description ?? ""}
           />
         </label>
       </div>
-      <ButtonSubmit className="btn btn-primary">Сохранить</ButtonSubmit>
-      <Link className="btn btn-ghost" href={`/collections/${id}`}>
-        Отмена
+      <ButtonSubmit className="btn btn-primary">Save</ButtonSubmit>
+      <Link className="btn btn-ghost" href={`/collections/${collection.id}`}>
+        Cancel
       </Link>
     </form>
   );

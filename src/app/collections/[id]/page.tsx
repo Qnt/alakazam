@@ -4,8 +4,7 @@ import CardList from "~/app/_components/card-list";
 import NewCardButton from "~/app/_components/new-card-button";
 import Breadcrumbs from "~/app/_components/ui/breadcrumbs";
 import ButtonSubmit from "~/app/_components/ui/button-submit";
-import { deleteCollection } from "~/server/actions";
-import { getCollectionById } from "~/server/queries";
+import { deleteCollection, getCollectionById } from "~/server/queries";
 
 export default async function Page({ params }: { params: { id: string } }) {
   const collection = await getCollectionById(params.id);
@@ -15,7 +14,7 @@ export default async function Page({ params }: { params: { id: string } }) {
       <Breadcrumbs
         breadcrumbs={[
           { label: <Home size={20} />, href: "/", active: false },
-          { label: "Коллекции", href: "/collections", active: false },
+          { label: "Collections", href: "/collections", active: false },
           {
             label: collection.name,
             href: `/collections/${collection.id}`,
@@ -26,7 +25,7 @@ export default async function Page({ params }: { params: { id: string } }) {
       <div className="flex gap-2">
         <form className="form-control grow">
           <label className="input input-bordered flex grow items-center gap-2">
-            <input type="text" className="grow" placeholder="Поиск" />
+            <input type="text" className="grow" placeholder="Search" />
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 16 16"
@@ -63,13 +62,13 @@ export default async function Page({ params }: { params: { id: string } }) {
                 href={`/collections/${collection.id}/edit`}
                 className="btn btn-ghost justify-between"
               >
-                <span>Изменить</span>
+                <span>Edit</span>
                 <SquarePen />
               </Link>
             </li>
             <li>
               <ButtonSubmit className="btn btn-ghost justify-between text-error">
-                <span>Удалить</span>
+                <span>Delete</span>
                 <Trash2 />
               </ButtonSubmit>
             </li>

@@ -14,7 +14,7 @@ export default function TopNav() {
         <div>
           <SignedOut>
             <SignInButton>
-              <button>Войти</button>
+              <button>Sign In</button>
             </SignInButton>
           </SignedOut>
           <SignedIn>

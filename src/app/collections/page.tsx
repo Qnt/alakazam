@@ -10,13 +10,13 @@ export default function Page() {
         <Breadcrumbs
           breadcrumbs={[
             { label: <Home size={20} />, href: "/", active: false },
-            { label: "Коллекции", href: "/collections", active: true },
+            { label: "Collections", href: "/collections", active: true },
           ]}
         />
         <div className="flex gap-2">
           <form className="form-control grow">
             <label className="input input-bordered flex grow items-center gap-2">
-              <input type="text" className="grow" placeholder="Поиск" />
+              <input type="text" className="grow" placeholder="Search" />
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 16 16"

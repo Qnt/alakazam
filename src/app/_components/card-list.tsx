@@ -12,7 +12,7 @@ export default async function CardList({
     <div className="flex flex-col gap-4">
       {cards.length === 0 && (
         <div className="flex h-full flex-col items-center justify-center">
-          <p>Коллекция пуста.</p>
+          <p>There are no cards in the collection yet</p>
         </div>
       )}
       {cards.length > 0 && (

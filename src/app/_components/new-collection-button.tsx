@@ -22,7 +22,7 @@ export default function NewCollectionButton() {
           dialogRef.current?.showModal();
         }}
       >
-        <span className="hidden md:inline">Создать коллекцию</span>
+        <span className="hidden md:inline">Create a collection</span>
         <BadgePlus />
       </button>
       <NewCollectionModal ref={dialogRef} key={modalKey} resetKey={resetKey} />

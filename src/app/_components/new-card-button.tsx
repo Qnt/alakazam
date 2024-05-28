@@ -23,7 +23,7 @@ export default function NewCardButton() {
         //   dialogRef.current?.showModal();
         // }}
       >
-        <span className="hidden md:inline">Создать карточку</span>
+        <span className="hidden md:inline">Create a card</span>
         <BadgePlus />
       </button>
       {/* <NewCardModal ref={dialogRef} key={modalKey} resetKey={resetKey} /> */}

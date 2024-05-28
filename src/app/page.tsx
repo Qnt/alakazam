@@ -10,13 +10,13 @@ export default function HomePage() {
         <div className="hero min-h-screen bg-base-200">
           <div className="hero-content text-center">
             <div className="max-w-md">
-              <h1 className="text-5xl font-bold">Алаказам</h1>
+              <h1 className="text-5xl font-bold">Alakazam</h1>
               <p className="py-6">
-                Приложение для эффективного запоминания и повторения на основе
-                флэш-карточек
+                Flash card based application for effective memorization and
+                repetition
               </p>
               <SignInButton>
-                <button className="btn btn-primary">Войти</button>
+                <button className="btn btn-primary">Sign In</button>
               </SignInButton>
             </div>
           </div>
@@ -26,7 +26,7 @@ export default function HomePage() {
         <nav>
           <ul>
             <li>
-              <Link href="/collections">Коллекции карт</Link>
+              <Link href="/collections">Collections</Link>
             </li>
           </ul>
         </nav>
