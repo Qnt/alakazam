@@ -1,3 +1,4 @@
+import typography from "@tailwindcss/typography";
 import daisyui from "daisyui";
 import { type Config } from "tailwindcss";
 import { fontFamily } from "tailwindcss/defaultTheme";
@@ -8,8 +9,9 @@ export default {
     extend: {
       fontFamily: {
         sans: ["var(--font-geist-sans)", ...fontFamily.sans],
+        logo: ["var(--font-lilita-one)"],
       },
     },
   },
-  plugins: [daisyui],
+  plugins: [typography, daisyui],
 } satisfies Config;

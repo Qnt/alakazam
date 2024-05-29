@@ -3,7 +3,16 @@ import "~/styles/globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { GeistSans } from "geist/font/sans";
 import type { Metadata } from "next";
+import { Lilita_One } from "next/font/google";
+import Link from "next/link";
 import TopNav from "./_components/topnav";
+
+const lilitaOne = Lilita_One({
+  subsets: ["latin"],
+  display: "swap",
+  weight: "400",
+  variable: "--font-lilita-one",
+});
 
 export const metadata: Metadata = {
   title: "Alakazam",
@@ -18,10 +27,23 @@ export default function RootLayout({
 }) {
   return (
     <ClerkProvider>
-      <html lang="en" className={`${GeistSans.variable}`}>
+      <html lang="en" className={`${GeistSans.variable} ${lilitaOne.variable}`}>
         <body>
           <TopNav />
           <main className="px-4">{children}</main>
+          <footer className="footer footer-center bg-base-200 p-4 text-base-content">
+            <aside>
+              <p>
+                Made with love by{" "}
+                <Link
+                  className="link link-primary visited:link-secondary"
+                  href="https://github.com/qnt/"
+                >
+                  Qnt
+                </Link>
+              </p>
+            </aside>
+          </footer>
         </body>
       </html>
     </ClerkProvider>
