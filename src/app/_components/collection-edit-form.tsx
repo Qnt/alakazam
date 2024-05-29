@@ -6,7 +6,11 @@ import { useFormState } from "react-dom";
 import { updateCollection, type CollectionFormState } from "~/server/queries";
 import ButtonSubmit from "./ui/button-submit";
 
-export default function EditForm({ collection }: { collection: Collection }) {
+export default function CollectionEditForm({
+  collection,
+}: {
+  collection: Collection;
+}) {
   const initFormState: CollectionFormState = { success: false, message: "" };
   const [formState, formAction] = useFormState(
     updateCollection.bind(null, collection.id),

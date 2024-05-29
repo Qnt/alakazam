@@ -6,8 +6,13 @@ import Breadcrumbs from "~/app/_components/ui/breadcrumbs";
 import ButtonSubmit from "~/app/_components/ui/button-submit";
 import { deleteCollection, getCollectionById } from "~/server/queries";
 
-export default async function Page({ params }: { params: { id: string } }) {
-  const collection = await getCollectionById(params.id);
+export default async function CollectionPage({
+  params,
+}: {
+  params: { collectionId: string };
+}) {
+  console.log(params);
+  const collection = await getCollectionById(params.collectionId);
 
   return (
     <div className="flex flex-col justify-between gap-2 lg:flex-row">
@@ -75,7 +80,7 @@ export default async function Page({ params }: { params: { id: string } }) {
           </ul>
         </div>
       </form>
-      <CardList collectionId={params.id} />
+      <CardList collectionId={params.collectionId} />
     </div>
   );
 }

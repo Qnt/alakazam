@@ -1,5 +1,5 @@
 import { Home } from "lucide-react";
-import EditForm from "~/app/_components/edit-form";
+import CollectionEditForm from "~/app/_components/collection-edit-form";
 import Breadcrumbs from "~/app/_components/ui/breadcrumbs";
 import { getCollectionById } from "~/server/queries";
 
@@ -24,7 +24,7 @@ export default async function Page({ params }: { params: { id: string } }) {
           },
         ]}
       />
-      <EditForm collection={collection} />
+      <CollectionEditForm collection={collection} />
     </div>
   );
 }

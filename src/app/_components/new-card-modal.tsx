@@ -36,8 +36,6 @@ const NewCardModal = forwardRef<HTMLDialogElement, CardModalProps>(
       }
     }, [formState, resetKey]);
 
-    console.log(formState);
-
     return (
       <>
         {isMounted &&

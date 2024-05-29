@@ -1,11 +1,12 @@
-// import { Home } from "lucide-react";
+import { Home } from "lucide-react";
+import CardEditForm from "~/app/_components/card-edit-form";
 // import Breadcrumbs from "~/app/_components/ui/breadcrumbs";
 import { getCardById } from "~/server/queries";
 
-export default async function Page({
+export default async function CardEditPage({
   params,
 }: {
-  params: { id: string; cardId: string };
+  params: { collectionId: string; cardId: string };
 }) {
   const card = await getCardById(params.cardId);
 
@@ -16,18 +17,18 @@ export default async function Page({
           { label: <Home size={20} />, href: "/", active: false },
           { label: "Collections", href: "/collections", active: false },
           {
-            label: params,
-            href: `/collections/${params.id}`,
-            active: true,
+            label: collection.name,
+            href: `/collections/${collection.id}`,
+            active: false,
           },
           {
-            label: params.cardId,
-            href: `/collections/${card.collectionId}/card/${card.id}`,
+            label: "Edit",
+            href: `/collections/${collection.id}/edit`,
             active: true,
           },
         ]}
       /> */}
-      {card.question}
+      <CardEditForm card={card} collectionId={params.collectionId} />
     </div>
   );
 }

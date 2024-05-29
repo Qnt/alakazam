@@ -1,4 +1,5 @@
 "use server";
+
 import { auth } from "@clerk/nextjs/server";
 import { Prisma, type Card } from "@prisma/client";
 import { revalidatePath } from "next/cache";
@@ -32,6 +33,7 @@ export type CardFormState = FormState & {
   errors?: {
     question?: string[];
     answer?: string[];
+    box?: string[];
   };
 };
 
@@ -54,7 +56,7 @@ export async function getMyCollections() {
   return collections;
 }
 
-export async function getCollectionById(id: string) {
+export async function getCollectionById(id: Collection["id"]) {
   const { userId } = auth();
 
   if (!userId) {
@@ -79,7 +81,7 @@ export async function getCollectionById(id: string) {
   return collection;
 }
 
-export async function getCardsByCollectionId(id: string) {
+export async function getCardsByCollectionId(id: Collection["id"]) {
   const { userId } = auth();
 
   if (!userId) {
@@ -141,10 +143,15 @@ export async function createCollection(
             "A collection with this name already exists. Please choose another name",
         };
       }
+      console.error("An unexpected error occurred: ", error);
+      return {
+        success: false,
+        message: "An unexpected error occurred. Please try again later.",
+      };
     }
-  } finally {
-    revalidatePath("/collections");
   }
+
+  revalidatePath("/collections");
 
   return {
     success: true,
@@ -153,7 +160,7 @@ export async function createCollection(
 }
 
 export async function updateCollection(
-  id: string,
+  id: Collection["id"],
   _prevState: FormState,
   formData: FormData,
 ) {
@@ -202,13 +209,18 @@ export async function updateCollection(
             "A collection with this name already exists. Please choose another name",
         };
       }
+      console.error("An unexpected error occurred: ", error);
+      return {
+        success: false,
+        message: "An unexpected error occurred. Please try again later.",
+      };
     }
   }
 
   redirect(`/collections/${id}`);
 }
 
-export async function deleteCollection(id: string) {
+export async function deleteCollection(id: Collection["id"]) {
   const { userId } = auth();
 
   if (!userId) {
@@ -267,7 +279,7 @@ export async function createCard(
   }
 
   try {
-    const card = await db.card.create({
+    await db.card.create({
       data: {
         question: validatedFields.data.question,
         answer: validatedFields.data.answer,
@@ -276,8 +288,6 @@ export async function createCard(
         collection: validatedFields.data.collection,
       },
     });
-
-    console.log(card);
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === "P2002") {
@@ -307,8 +317,8 @@ export async function createCard(
 }
 
 export async function updateCard(
-  cardId: string,
-  collectionId: string,
+  cardId: Card["id"],
+  collectionId: Collection["id"],
   _prevState: FormState,
   formData: FormData,
 ) {
@@ -322,6 +332,7 @@ export async function updateCard(
     question: formData.get("question"),
     answer: formData.get("answer"),
     box: formData.get("box"),
+    userId: userId,
     collection: { connect: { id: collectionId } },
   });
 
@@ -343,6 +354,7 @@ export async function updateCard(
         answer: validatedFields.data.answer,
         box: validatedFields.data.box,
         collection: validatedFields.data.collection,
+        userId: validatedFields.data.userId,
       },
     });
   } catch (error) {
@@ -357,6 +369,11 @@ export async function updateCard(
             "A card with this question already exists. Please choose another question",
         };
       }
+      console.error("An unexpected error occurred: ", error);
+      return {
+        success: false,
+        message: "An unexpected error occurred. Please try again later.",
+      };
     }
   }
 
@@ -386,4 +403,27 @@ export async function getCardById(id: Card["id"]) {
   }
 
   return card;
+}
+
+export async function deleteCard(card: Card) {
+  const { userId } = auth();
+
+  if (!userId) {
+    throw new Error("You must be signed in to perform this action");
+  }
+
+  try {
+    await db.card.delete({
+      where: {
+        id: card.id,
+      },
+    });
+  } catch (error) {
+    console.error("Something went wrong while deleting a card");
+    return {
+      message: "An error occurred while deleting a card",
+    };
+  }
+
+  redirect(`/collections/${card.collectionId}`);
 }
