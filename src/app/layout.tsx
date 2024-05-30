@@ -4,7 +4,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { GeistSans } from "geist/font/sans";
 import type { Metadata } from "next";
 import { Lilita_One } from "next/font/google";
-import Link from "next/link";
+import Footer from "./_components/footer";
 import TopNav from "./_components/topnav";
 
 const lilitaOne = Lilita_One({
@@ -28,22 +28,10 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en" className={`${GeistSans.variable} ${lilitaOne.variable}`}>
-        <body>
+        <body className="flex min-h-screen flex-col">
           <TopNav />
           <main className="px-4">{children}</main>
-          <footer className="footer footer-center bg-base-200 p-4 text-base-content">
-            <aside>
-              <p>
-                Made with love by{" "}
-                <Link
-                  className="link link-primary visited:link-secondary"
-                  href="https://github.com/qnt/"
-                >
-                  Qnt
-                </Link>
-              </p>
-            </aside>
-          </footer>
+          <Footer />
         </body>
       </html>
     </ClerkProvider>
