@@ -39,7 +39,7 @@ export default function TopNav() {
       <div className="hidden flex-none lg:block">
         <ul className="menu menu-horizontal">
           <li>
-            <Link href="/home/">Home</Link>
+            <Link href="/home">Home</Link>
           </li>
           <li>
             <Link href="/collections">Collections</Link>
