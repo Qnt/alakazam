@@ -17,7 +17,7 @@ export default async function CardList({
         </div>
       )}
       {cards.length > 0 && (
-        <ul>
+        <ul className="flex flex-col gap-4 md:grid md:grid-cols-[repeat(auto-fill,minmax(18rem,1fr))]">
           {cards.map((c) => (
             <li key={c.id}>
               <CardCard card={c} collectionId={collectionId} />

@@ -30,7 +30,7 @@ export default function RootLayout({
       <html lang="en" className={`${GeistSans.variable} ${lilitaOne.variable}`}>
         <body className="flex min-h-screen flex-col">
           <TopNav />
-          <main className="px-4">{children}</main>
+          <main className="px-4 py-2">{children}</main>
           <Footer />
         </body>
       </html>

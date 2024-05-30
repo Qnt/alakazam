@@ -12,9 +12,16 @@ export default function HomePage() {
       </SignedOut>
       <SignedIn>
         <nav>
-          <ul>
+          <ul className="flex flex-col gap-2">
             <li>
-              <Link href="/collections">Collections</Link>
+              <Link href="/overview" className="btn btn-ghost text-base">
+                Overview
+              </Link>
+            </li>
+            <li>
+              <Link href="/collections" className="btn btn-ghost text-base">
+                Collections
+              </Link>
             </li>
           </ul>
         </nav>
