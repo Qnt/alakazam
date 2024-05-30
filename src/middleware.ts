@@ -4,9 +4,10 @@ import { NextResponse } from "next/server";
 const isProtectedRoute = createRouteMatcher(["/home(.*)", "/collections(.*)"]);
 
 export default clerkMiddleware((auth, req) => {
-  if (isProtectedRoute(req)) auth().protect();
-  const { userId } = auth();
-  if (userId && req.nextUrl.pathname === "/") {
+  if (isProtectedRoute(req)) {
+    auth().protect();
+  }
+  if (auth().userId && req.nextUrl.pathname === "/") {
     const url = new URL("/home", req.nextUrl.origin);
     return NextResponse.redirect(url);
   }
