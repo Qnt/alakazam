@@ -3,11 +3,11 @@ import Link from "next/link";
 
 export default function TopNav() {
   return (
-    <div className="navbar bg-base-200">
+    <div className="navbar sticky top-0 z-30 bg-base-200">
       <SignedIn>
         <div className="flex-none lg:hidden">
           <label
-            htmlFor="my-drawer-3"
+            htmlFor="drawer"
             aria-label="open sidebar"
             className="btn btn-square btn-ghost"
           >
