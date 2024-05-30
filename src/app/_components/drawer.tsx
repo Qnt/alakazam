@@ -2,7 +2,7 @@
 
 import { Home, Library } from "lucide-react";
 import Link from "next/link";
-import { useRef, useState, type ReactNode } from "react";
+import { useRef, type ReactNode } from "react";
 import TopNav from "./topnav";
 
 export default function Drawer({ children }: { children: ReactNode }) {
