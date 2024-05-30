@@ -3,14 +3,48 @@ import Link from "next/link";
 
 export default function TopNav() {
   return (
-    <nav className="navbar bg-base-200">
+    <div className="navbar bg-base-200">
+      <SignedIn>
+        <div className="flex-none lg:hidden">
+          <label
+            htmlFor="my-drawer-3"
+            aria-label="open sidebar"
+            className="btn btn-square btn-ghost"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              className="inline-block h-6 w-6 stroke-current"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              ></path>
+            </svg>
+          </label>
+        </div>
+      </SignedIn>
       <div className="flex-1">
         <Link
           href="/"
-          className="font-logo btn btn-ghost text-xl font-normal uppercase"
+          className="btn btn-ghost font-logo text-xl font-normal uppercase"
         >
           Alakazam
         </Link>
+      </div>
+
+      <div className="hidden flex-none lg:block">
+        <ul className="menu menu-horizontal">
+          <li>
+            <Link href="/home/">Home</Link>
+          </li>
+          <li>
+            <Link href="/collections">Collections</Link>
+          </li>
+        </ul>
       </div>
 
       <div className="flex-none">
@@ -25,6 +59,6 @@ export default function TopNav() {
           </SignedIn>
         </div>
       </div>
-    </nav>
+    </div>
   );
 }

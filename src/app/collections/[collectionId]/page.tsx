@@ -1,32 +1,21 @@
-import { EllipsisVertical, Home, SquarePen, Trash2 } from "lucide-react";
+import { EllipsisVertical, SquarePen, Trash2 } from "lucide-react";
 import Link from "next/link";
+import { type Collection } from "prisma/generated/zod";
 import CardList from "~/app/_components/card-list";
 import NewCardButton from "~/app/_components/new-card-button";
-import Breadcrumbs from "~/app/_components/ui/breadcrumbs";
 import ButtonSubmit from "~/app/_components/ui/button-submit";
 import { deleteCollection, getCollectionById } from "~/server/queries";
 
 export default async function CollectionPage({
   params,
 }: {
-  params: { collectionId: string };
+  params: { collectionId: Collection["id"] };
 }) {
   console.log(params);
   const collection = await getCollectionById(params.collectionId);
 
   return (
     <div className="flex flex-col justify-between gap-2 lg:flex-row">
-      <Breadcrumbs
-        breadcrumbs={[
-          { label: <Home size={20} />, href: "/", active: false },
-          { label: "Collections", href: "/collections", active: false },
-          {
-            label: collection.name,
-            href: `/collections/${collection.id}`,
-            active: true,
-          },
-        ]}
-      />
       <div className="flex gap-2">
         <form className="form-control grow">
           <label className="input input-bordered flex grow items-center gap-2">

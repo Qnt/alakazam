@@ -1,5 +1,5 @@
-import { type Collection } from "@prisma/client";
 import Link from "next/link";
+import { type Collection } from "prisma/generated/zod";
 
 export default function CollectionCard({
   collection,

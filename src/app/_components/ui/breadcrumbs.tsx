@@ -1,43 +1,47 @@
-import clsx from "clsx";
+"use client";
+
+import { Home } from "lucide-react";
 import Link from "next/link";
-import { type ReactNode } from "react";
-
-type Breadcrumb = {
-  label: string | ReactNode;
-  href: string;
-  active: boolean;
-};
-
-type BreadcrumbsProps = Breadcrumb[];
+import { usePathname } from "next/navigation";
 
 export default function Breadcrumbs({
-  breadcrumbs,
+  customLabel,
+  capitalizeLabel = true,
 }: {
-  breadcrumbs: BreadcrumbsProps;
+  customLabel?: string;
+  capitalizeLabel?: boolean;
 }) {
+  const pathname = usePathname();
+  const pathnameWithoutQuery = pathname.split("?")[0]!;
+  const segments = pathnameWithoutQuery.split("/").filter((s) => s !== "");
+  if (capitalizeLabel) {
+    segments.map((s) => `${s[0]?.toUpperCase()}${s.slice(1)}`);
+  }
+
   return (
-    <div className="breadcrumbs text-sm">
-      <ul>
-        {breadcrumbs.map((b, i) => {
-          if (i === breadcrumbs.length - 1) {
-            return (
-              <li key={b.href} className="font-bold">
-                <span>{b.label}</span>
-              </li>
-            );
+    <nav className="breadcrumbs text-sm">
+      <ol>
+        <li>
+          <Link href="/">
+            <Home />
+          </Link>
+        </li>
+        {segments.map((s, i) => {
+          const href = `/${segments.slice(0, i + 1).join("/")}`;
+          let label = capitalizeLabel
+            ? `${segments[i]?.at(0)?.toUpperCase()}${segments[i]?.slice(1)}`
+            : segments[i];
+          if (customLabel && i === segments.length - 1) {
+            label = customLabel;
           }
+          // capitalizeLabel ?
           return (
-            <li key={b.href}>
-              <Link
-                href={b.href}
-                className={clsx("link-hover", "link", b.active && "font-bold")}
-              >
-                {b.label}
-              </Link>
+            <li key={href}>
+              <Link href={href}>{label}</Link>
             </li>
           );
         })}
-      </ul>
-    </div>
+      </ol>
+    </nav>
   );
 }

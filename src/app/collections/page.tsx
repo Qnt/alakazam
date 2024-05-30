@@ -1,18 +1,10 @@
-import { Home } from "lucide-react";
 import CollectionList from "../_components/collection-list";
 import NewCollectionButton from "../_components/new-collection-button";
-import Breadcrumbs from "../_components/ui/breadcrumbs";
 
 export default function Page() {
   return (
     <div className="flex flex-col">
       <div className="fixed inset-x-4 z-10 flex flex-col gap-2 bg-base-100 pb-2">
-        <Breadcrumbs
-          breadcrumbs={[
-            { label: <Home size={20} />, href: "/", active: false },
-            { label: "Collections", href: "/collections", active: true },
-          ]}
-        />
         <div className="flex gap-2">
           <form className="form-control grow">
             <label className="input input-bordered flex grow items-center gap-2">

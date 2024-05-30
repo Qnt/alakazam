@@ -4,8 +4,8 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { GeistSans } from "geist/font/sans";
 import type { Metadata } from "next";
 import { Lilita_One } from "next/font/google";
+import Drawer from "./_components/drawer";
 import Footer from "./_components/footer";
-import TopNav from "./_components/topnav";
 
 const lilitaOne = Lilita_One({
   subsets: ["latin"],
@@ -29,8 +29,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" className={`${GeistSans.variable} ${lilitaOne.variable}`}>
         <body className="flex min-h-screen flex-col">
-          <TopNav />
-          <main className="px-4 py-2">{children}</main>
+          <Drawer>{children}</Drawer>
           <Footer />
         </body>
       </html>
