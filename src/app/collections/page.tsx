@@ -8,7 +8,6 @@ export default function Page() {
         <div className="flex gap-2">
           <form className="form-control grow">
             <label className="input input-bordered flex grow items-center gap-2">
-              <input type="text" className="grow" placeholder="Search" />
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 16 16"
@@ -21,6 +20,7 @@ export default function Page() {
                   clipRule="evenodd"
                 />
               </svg>
+              <input type="text" className="grow" placeholder="Search" />
             </label>
           </form>
           <NewCollectionButton />

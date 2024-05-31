@@ -1,13 +1,13 @@
 import { SquarePen, Trash2 } from "lucide-react";
 import Link from "next/link";
-import { type Card, type Collection } from "prisma/generated/zod";
+import { type Card } from "prisma/generated/zod";
 import ButtonSubmit from "~/app/_components/ui/button-submit";
 import { deleteCard, getCardById } from "~/server/queries";
 
 export default async function CardPage({
   params,
 }: {
-  params: { collectionId: Collection["id"]; cardId: Card["id"] };
+  params: { cardId: Card["id"] };
 }) {
   const card = await getCardById(params.cardId);
 
@@ -18,7 +18,7 @@ export default async function CardPage({
         action={deleteCard.bind(null, card)}
       >
         <Link
-          href={`/collections/${params.collectionId}/${params.cardId}/edit`}
+          href={`/cards/${params.cardId}/edit`}
           className="btn btn-primary btn-sm items-center"
         >
           <SquarePen size={16} />

@@ -11,7 +11,7 @@ export default function CollectionCard({
       href={`/collections/${collection.id}`}
       className="cursor-pointer focus:rounded-2xl"
     >
-      <div className="card card-compact h-full w-full bg-base-300 text-base-content shadow-xl">
+      <div className="card card-compact h-full w-full bg-base-200 text-base-content shadow-xl">
         <div className="card-body">
           <h2 className="card-title">{collection.name}</h2>
           {collection.description && <p>{collection.description}</p>}

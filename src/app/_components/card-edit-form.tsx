@@ -1,21 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { BoxSchema, type Card, type Collection } from "prisma/generated/zod";
+import { BoxSchema, type Card } from "prisma/generated/zod";
 import { useFormState } from "react-dom";
 import { updateCard, type CardFormState } from "~/server/queries";
 import ButtonSubmit from "./ui/button-submit";
 
-export default function CardEditForm({
-  card,
-  collectionId,
-}: {
-  card: Card;
-  collectionId: Collection["id"];
-}) {
+export default function CardEditForm({ card }: { card: Card }) {
   const initFormState: CardFormState = { success: false, message: "" };
   const [formState, formAction] = useFormState(
-    updateCard.bind(null, card.id, collectionId),
+    updateCard.bind(null, card.id, card.collectionId),
     initFormState,
   );
 
@@ -92,10 +86,7 @@ export default function CardEditForm({
       </div>
 
       <ButtonSubmit className="btn btn-primary">Save</ButtonSubmit>
-      <Link
-        className="btn btn-ghost"
-        href={`/collections/${collectionId}/${card.id}`}
-      >
+      <Link className="btn btn-ghost" href={`/cards/${card.id}`}>
         Cancel
       </Link>
     </form>
