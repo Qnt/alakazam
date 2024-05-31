@@ -11,7 +11,6 @@ export default async function CollectionPage({
 }: {
   params: { collectionId: Collection["id"] };
 }) {
-  console.log(params);
   const collection = await getCollectionById(params.collectionId);
 
   return (
@@ -56,13 +55,13 @@ export default async function CollectionPage({
                 href={`/collections/${collection.id}/edit`}
                 className="btn btn-ghost justify-between"
               >
-                <span>Edit</span>
+                <span>Edit collection</span>
                 <SquarePen />
               </Link>
             </li>
             <li>
               <ButtonSubmit className="btn btn-ghost justify-between text-error">
-                <span>Delete</span>
+                <span>Delete collection</span>
                 <Trash2 />
               </ButtonSubmit>
             </li>

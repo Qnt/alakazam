@@ -12,7 +12,7 @@ export default function Drawer({ children }: { children: ReactNode }) {
   };
 
   return (
-    <div className="drawer">
+    <div className="drawer grow">
       <input
         id="drawer"
         type="checkbox"
@@ -21,7 +21,7 @@ export default function Drawer({ children }: { children: ReactNode }) {
       />
       <div className="drawer-content flex flex-col">
         <TopNav />
-        <main className="px-4 py-2">{children}</main>
+        <main className="grow px-4 py-2">{children}</main>
       </div>
       <div className="drawer-side z-40">
         <label

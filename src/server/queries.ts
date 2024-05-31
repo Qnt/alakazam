@@ -1,7 +1,7 @@
 "use server";
 
 import { auth } from "@clerk/nextjs/server";
-import { Prisma, type Card } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import {
@@ -9,6 +9,7 @@ import {
   CardUpdateInputSchema,
   CollectionCreateWithoutCardsInputSchema,
   CollectionUpdateWithoutCardsInputSchema,
+  type Card,
   type Collection,
 } from "prisma/generated/zod";
 import "server-only";
@@ -230,12 +231,14 @@ export async function deleteCollection(id: Collection["id"]) {
   const deleteCards = db.card.deleteMany({
     where: {
       collectionId: id,
+      userId,
     },
   });
 
   const deleteCollection = db.collection.delete({
     where: {
       id: id,
+      userId,
     },
   });
 
@@ -416,6 +419,7 @@ export async function deleteCard(card: Card) {
     await db.card.delete({
       where: {
         id: card.id,
+        userId,
       },
     });
   } catch (error) {
@@ -426,4 +430,64 @@ export async function deleteCard(card: Card) {
   }
 
   redirect(`/collections/${card.collectionId}`);
+}
+
+export async function getSessionCompleted(collectionId: Collection["id"]) {
+  const { userId } = auth();
+
+  if (!userId) {
+    throw new Error("You must be signed in to perform this action");
+  }
+
+  const currentSession = await db.collection.findFirst({
+    where: {
+      id: collectionId,
+      userId,
+    },
+    select: {
+      sessionsCompeted: true,
+    },
+  });
+
+  if (!currentSession) {
+    throw new Error("Collection not found");
+  }
+
+  return currentSession.sessionsCompeted;
+}
+
+export async function getCurrentSession(collectionId: Collection["id"]) {
+  const sessionsCompleted = await getSessionCompleted(collectionId);
+  return sessionsCompleted + 1;
+}
+
+export async function getCardsForSession(
+  collectionId: Collection["id"],
+  currentSession: Collection["sessionsCompeted"],
+): Promise<Card[]> {
+  const { userId } = auth();
+
+  if (!userId) {
+    throw new Error("You must be signed in to perform this action");
+  }
+
+  const boxesToGet: Card["box"][] = ["BEGINNER"];
+  if (currentSession % 3 === 0) {
+    boxesToGet.push("INTERMEDIATE");
+  }
+  if (currentSession % 5 === 0) {
+    boxesToGet.push("ADVANCED");
+  }
+
+  const cards = await db.card.findMany({
+    where: {
+      collectionId: collectionId,
+      userId,
+      box: {
+        in: boxesToGet,
+      },
+    },
+  });
+
+  return cards;
 }

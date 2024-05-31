@@ -8,9 +8,10 @@ export default function CardCard({ card }: { card: Card }) {
       className="cursor-pointer focus:rounded-2xl"
     >
       <div className="card card-compact h-full w-full bg-base-200 text-neutral-content shadow-xl">
-        <div className="card-body">
+        <div className="prose card-body">
           <h2 className="card-title">{card.question}</h2>
           <p>{card.answer}</p>
+          <p>{card.box}</p>
         </div>
       </div>
     </Link>

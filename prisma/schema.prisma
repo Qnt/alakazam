@@ -17,24 +17,33 @@ datasource db {
 }
 
 model Collection {
-  id          String  @id @default(cuid())
-  name        String /// @zod.string.trim().min(1, { message: "The name can't be empty" })
-  description String? /// @zod.string.trim()
-  userId      String
-  cards       Card[]
+  id               String    @id @default(cuid())
+  name             String /// @zod.string.trim().min(1, { message: "The name can't be empty" })
+  description      String? /// @zod.string.trim()
+  userId           String ///@zod.string.trim().min(1, { message: "The user id can't be empty" })
+  cards            Card[]
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @default(now()) @updatedAt
+  sessionsCompeted Int       @default(0) /// @zod.number.int().nonnegative()
+  lastSession      DateTime? @default(now())
 
   @@unique([name, userId])
   @@index([userId])
 }
 
 model Card {
-  id           String     @id @default(cuid())
-  question     String /// @zod.string.trim().min(1, { message: "The question can't be empty" })
-  answer       String /// @zod.string.trim().min(1, { message: "The answer can't be empty" })
-  collection   Collection @relation(fields: [collectionId], references: [id])
-  collectionId String
-  box          Box        @default(BEGINNER)
-  userId       String
+  id                String     @id @default(cuid())
+  question          String /// @zod.string.trim().min(1, { message: "The question can't be empty" })
+  answer            String /// @zod.string.trim().min(1, { message: "The answer can't be empty" })
+  collection        Collection @relation(fields: [collectionId], references: [id])
+  collectionId      String /// @zod.string.trim().min(1, { message: "The collection id can't be empty" })
+  box               Box        @default(BEGINNER)
+  userId            String /// @zod.string.trim().min(1, { message: "The user id can't be empty" })
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @default(now()) @updatedAt
+  lastAnswered      DateTime?  @default(now())
+  answeredCorrectly Int        @default(0) /// @zod.number.int().nonnegative()
+  answeredWrongly   Int        @default(0) /// @zod.number.int().nonnegative()
 
   @@unique([question, collectionId, userId])
   @@index([collectionId])

@@ -12,9 +12,9 @@ import type { Prisma } from '@prisma/client';
 
 export const TransactionIsolationLevelSchema = z.enum(['ReadUncommitted','ReadCommitted','RepeatableRead','Serializable']);
 
-export const CollectionScalarFieldEnumSchema = z.enum(['id','name','description','userId']);
+export const CollectionScalarFieldEnumSchema = z.enum(['id','name','description','userId','createdAt','updatedAt','sessionsCompeted','lastSession']);
 
-export const CardScalarFieldEnumSchema = z.enum(['id','question','answer','collectionId','box','userId']);
+export const CardScalarFieldEnumSchema = z.enum(['id','question','answer','collectionId','box','userId','createdAt','updatedAt','lastAnswered','answeredCorrectly','answeredWrongly']);
 
 export const SortOrderSchema = z.enum(['asc','desc']);
 
@@ -38,7 +38,11 @@ export const CollectionSchema = z.object({
   id: z.string().cuid(),
   name: z.string().trim().min(1, { message: "The name can't be empty" }),
   description: z.string().trim().nullable(),
-  userId: z.string(),
+  userId: z.string().trim().min(1, { message: "The user id can't be empty" }),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+  sessionsCompeted: z.number().int().nonnegative(),
+  lastSession: z.coerce.date().nullable(),
 })
 
 export type Collection = z.infer<typeof CollectionSchema>
@@ -52,8 +56,13 @@ export const CardSchema = z.object({
   id: z.string().cuid(),
   question: z.string().trim().min(1, { message: "The question can't be empty" }),
   answer: z.string().trim().min(1, { message: "The answer can't be empty" }),
-  collectionId: z.string(),
-  userId: z.string(),
+  collectionId: z.string().trim().min(1, { message: "The collection id can't be empty" }),
+  userId: z.string().trim().min(1, { message: "The user id can't be empty" }),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+  lastAnswered: z.coerce.date().nullable(),
+  answeredCorrectly: z.number().int().nonnegative(),
+  answeredWrongly: z.number().int().nonnegative(),
 })
 
 export type Card = z.infer<typeof CardSchema>
@@ -88,6 +97,10 @@ export const CollectionSelectSchema: z.ZodType<Prisma.CollectionSelect> = z.obje
   name: z.boolean().optional(),
   description: z.boolean().optional(),
   userId: z.boolean().optional(),
+  createdAt: z.boolean().optional(),
+  updatedAt: z.boolean().optional(),
+  sessionsCompeted: z.boolean().optional(),
+  lastSession: z.boolean().optional(),
   cards: z.union([z.boolean(),z.lazy(() => CardFindManyArgsSchema)]).optional(),
   _count: z.union([z.boolean(),z.lazy(() => CollectionCountOutputTypeArgsSchema)]).optional(),
 }).strict()
@@ -111,6 +124,11 @@ export const CardSelectSchema: z.ZodType<Prisma.CardSelect> = z.object({
   collectionId: z.boolean().optional(),
   box: z.boolean().optional(),
   userId: z.boolean().optional(),
+  createdAt: z.boolean().optional(),
+  updatedAt: z.boolean().optional(),
+  lastAnswered: z.boolean().optional(),
+  answeredCorrectly: z.boolean().optional(),
+  answeredWrongly: z.boolean().optional(),
   collection: z.union([z.boolean(),z.lazy(() => CollectionArgsSchema)]).optional(),
 }).strict()
 
@@ -127,6 +145,10 @@ export const CollectionWhereInputSchema: z.ZodType<Prisma.CollectionWhereInput> 
   name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   description: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   userId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  sessionsCompeted: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  lastSession: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
   cards: z.lazy(() => CardListRelationFilterSchema).optional()
 }).strict();
 
@@ -135,6 +157,10 @@ export const CollectionOrderByWithRelationInputSchema: z.ZodType<Prisma.Collecti
   name: z.lazy(() => SortOrderSchema).optional(),
   description: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   userId: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  sessionsCompeted: z.lazy(() => SortOrderSchema).optional(),
+  lastSession: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   cards: z.lazy(() => CardOrderByRelationAggregateInputSchema).optional()
 }).strict();
 
@@ -158,7 +184,11 @@ export const CollectionWhereUniqueInputSchema: z.ZodType<Prisma.CollectionWhereU
   NOT: z.union([ z.lazy(() => CollectionWhereInputSchema),z.lazy(() => CollectionWhereInputSchema).array() ]).optional(),
   name: z.union([ z.lazy(() => StringFilterSchema),z.string().trim().min(1, { message: "The name can't be empty" }) ]).optional(),
   description: z.union([ z.lazy(() => StringNullableFilterSchema),z.string().trim() ]).optional().nullable(),
-  userId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  userId: z.union([ z.lazy(() => StringFilterSchema),z.string().trim().min(1, { message: "The user id can't be empty" }) ]).optional(),
+  createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  sessionsCompeted: z.union([ z.lazy(() => IntFilterSchema),z.number().int().nonnegative() ]).optional(),
+  lastSession: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
   cards: z.lazy(() => CardListRelationFilterSchema).optional()
 }).strict());
 
@@ -167,9 +197,15 @@ export const CollectionOrderByWithAggregationInputSchema: z.ZodType<Prisma.Colle
   name: z.lazy(() => SortOrderSchema).optional(),
   description: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   userId: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  sessionsCompeted: z.lazy(() => SortOrderSchema).optional(),
+  lastSession: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   _count: z.lazy(() => CollectionCountOrderByAggregateInputSchema).optional(),
+  _avg: z.lazy(() => CollectionAvgOrderByAggregateInputSchema).optional(),
   _max: z.lazy(() => CollectionMaxOrderByAggregateInputSchema).optional(),
-  _min: z.lazy(() => CollectionMinOrderByAggregateInputSchema).optional()
+  _min: z.lazy(() => CollectionMinOrderByAggregateInputSchema).optional(),
+  _sum: z.lazy(() => CollectionSumOrderByAggregateInputSchema).optional()
 }).strict();
 
 export const CollectionScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.CollectionScalarWhereWithAggregatesInput> = z.object({
@@ -180,6 +216,10 @@ export const CollectionScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.Co
   name: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   description: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
   userId: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  createdAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
+  updatedAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
+  sessionsCompeted: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
+  lastSession: z.union([ z.lazy(() => DateTimeNullableWithAggregatesFilterSchema),z.coerce.date() ]).optional().nullable(),
 }).strict();
 
 export const CardWhereInputSchema: z.ZodType<Prisma.CardWhereInput> = z.object({
@@ -192,6 +232,11 @@ export const CardWhereInputSchema: z.ZodType<Prisma.CardWhereInput> = z.object({
   collectionId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   box: z.union([ z.lazy(() => EnumBoxFilterSchema),z.lazy(() => BoxSchema) ]).optional(),
   userId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  lastAnswered: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
+  answeredCorrectly: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  answeredWrongly: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   collection: z.union([ z.lazy(() => CollectionRelationFilterSchema),z.lazy(() => CollectionWhereInputSchema) ]).optional(),
 }).strict();
 
@@ -202,6 +247,11 @@ export const CardOrderByWithRelationInputSchema: z.ZodType<Prisma.CardOrderByWit
   collectionId: z.lazy(() => SortOrderSchema).optional(),
   box: z.lazy(() => SortOrderSchema).optional(),
   userId: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  lastAnswered: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  answeredCorrectly: z.lazy(() => SortOrderSchema).optional(),
+  answeredWrongly: z.lazy(() => SortOrderSchema).optional(),
   collection: z.lazy(() => CollectionOrderByWithRelationInputSchema).optional()
 }).strict();
 
@@ -225,9 +275,14 @@ export const CardWhereUniqueInputSchema: z.ZodType<Prisma.CardWhereUniqueInput> 
   NOT: z.union([ z.lazy(() => CardWhereInputSchema),z.lazy(() => CardWhereInputSchema).array() ]).optional(),
   question: z.union([ z.lazy(() => StringFilterSchema),z.string().trim().min(1, { message: "The question can't be empty" }) ]).optional(),
   answer: z.union([ z.lazy(() => StringFilterSchema),z.string().trim().min(1, { message: "The answer can't be empty" }) ]).optional(),
-  collectionId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  collectionId: z.union([ z.lazy(() => StringFilterSchema),z.string().trim().min(1, { message: "The collection id can't be empty" }) ]).optional(),
   box: z.union([ z.lazy(() => EnumBoxFilterSchema),z.lazy(() => BoxSchema) ]).optional(),
-  userId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  userId: z.union([ z.lazy(() => StringFilterSchema),z.string().trim().min(1, { message: "The user id can't be empty" }) ]).optional(),
+  createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  lastAnswered: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
+  answeredCorrectly: z.union([ z.lazy(() => IntFilterSchema),z.number().int().nonnegative() ]).optional(),
+  answeredWrongly: z.union([ z.lazy(() => IntFilterSchema),z.number().int().nonnegative() ]).optional(),
   collection: z.union([ z.lazy(() => CollectionRelationFilterSchema),z.lazy(() => CollectionWhereInputSchema) ]).optional(),
 }).strict());
 
@@ -238,9 +293,16 @@ export const CardOrderByWithAggregationInputSchema: z.ZodType<Prisma.CardOrderBy
   collectionId: z.lazy(() => SortOrderSchema).optional(),
   box: z.lazy(() => SortOrderSchema).optional(),
   userId: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  lastAnswered: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  answeredCorrectly: z.lazy(() => SortOrderSchema).optional(),
+  answeredWrongly: z.lazy(() => SortOrderSchema).optional(),
   _count: z.lazy(() => CardCountOrderByAggregateInputSchema).optional(),
+  _avg: z.lazy(() => CardAvgOrderByAggregateInputSchema).optional(),
   _max: z.lazy(() => CardMaxOrderByAggregateInputSchema).optional(),
-  _min: z.lazy(() => CardMinOrderByAggregateInputSchema).optional()
+  _min: z.lazy(() => CardMinOrderByAggregateInputSchema).optional(),
+  _sum: z.lazy(() => CardSumOrderByAggregateInputSchema).optional()
 }).strict();
 
 export const CardScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.CardScalarWhereWithAggregatesInput> = z.object({
@@ -253,13 +315,22 @@ export const CardScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.CardScal
   collectionId: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   box: z.union([ z.lazy(() => EnumBoxWithAggregatesFilterSchema),z.lazy(() => BoxSchema) ]).optional(),
   userId: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  createdAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
+  updatedAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
+  lastAnswered: z.union([ z.lazy(() => DateTimeNullableWithAggregatesFilterSchema),z.coerce.date() ]).optional().nullable(),
+  answeredCorrectly: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
+  answeredWrongly: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
 }).strict();
 
 export const CollectionCreateInputSchema: z.ZodType<Prisma.CollectionCreateInput> = z.object({
   id: z.string().cuid().optional(),
   name: z.string().trim().min(1, { message: "The name can't be empty" }),
   description: z.string().trim().optional().nullable(),
-  userId: z.string(),
+  userId: z.string().trim().min(1, { message: "The user id can't be empty" }),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  sessionsCompeted: z.number().int().nonnegative().optional(),
+  lastSession: z.coerce.date().optional().nullable(),
   cards: z.lazy(() => CardCreateNestedManyWithoutCollectionInputSchema).optional()
 }).strict();
 
@@ -267,7 +338,11 @@ export const CollectionUncheckedCreateInputSchema: z.ZodType<Prisma.CollectionUn
   id: z.string().cuid().optional(),
   name: z.string().trim().min(1, { message: "The name can't be empty" }),
   description: z.string().trim().optional().nullable(),
-  userId: z.string(),
+  userId: z.string().trim().min(1, { message: "The user id can't be empty" }),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  sessionsCompeted: z.number().int().nonnegative().optional(),
+  lastSession: z.coerce.date().optional().nullable(),
   cards: z.lazy(() => CardUncheckedCreateNestedManyWithoutCollectionInputSchema).optional()
 }).strict();
 
@@ -275,7 +350,11 @@ export const CollectionUpdateInputSchema: z.ZodType<Prisma.CollectionUpdateInput
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string().trim().min(1, { message: "The name can't be empty" }),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string().trim(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  userId: z.union([ z.string().trim().min(1, { message: "The user id can't be empty" }),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  sessionsCompeted: z.union([ z.number().int().nonnegative(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  lastSession: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   cards: z.lazy(() => CardUpdateManyWithoutCollectionNestedInputSchema).optional()
 }).strict();
 
@@ -283,7 +362,11 @@ export const CollectionUncheckedUpdateInputSchema: z.ZodType<Prisma.CollectionUn
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string().trim().min(1, { message: "The name can't be empty" }),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string().trim(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  userId: z.union([ z.string().trim().min(1, { message: "The user id can't be empty" }),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  sessionsCompeted: z.union([ z.number().int().nonnegative(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  lastSession: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   cards: z.lazy(() => CardUncheckedUpdateManyWithoutCollectionNestedInputSchema).optional()
 }).strict();
 
@@ -291,21 +374,33 @@ export const CollectionCreateManyInputSchema: z.ZodType<Prisma.CollectionCreateM
   id: z.string().cuid().optional(),
   name: z.string().trim().min(1, { message: "The name can't be empty" }),
   description: z.string().trim().optional().nullable(),
-  userId: z.string()
+  userId: z.string().trim().min(1, { message: "The user id can't be empty" }),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  sessionsCompeted: z.number().int().nonnegative().optional(),
+  lastSession: z.coerce.date().optional().nullable()
 }).strict();
 
 export const CollectionUpdateManyMutationInputSchema: z.ZodType<Prisma.CollectionUpdateManyMutationInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string().trim().min(1, { message: "The name can't be empty" }),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string().trim(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  userId: z.union([ z.string().trim().min(1, { message: "The user id can't be empty" }),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  sessionsCompeted: z.union([ z.number().int().nonnegative(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  lastSession: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
 export const CollectionUncheckedUpdateManyInputSchema: z.ZodType<Prisma.CollectionUncheckedUpdateManyInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string().trim().min(1, { message: "The name can't be empty" }),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string().trim(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  userId: z.union([ z.string().trim().min(1, { message: "The user id can't be empty" }),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  sessionsCompeted: z.union([ z.number().int().nonnegative(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  lastSession: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
 export const CardCreateInputSchema: z.ZodType<Prisma.CardCreateInput> = z.object({
@@ -313,7 +408,12 @@ export const CardCreateInputSchema: z.ZodType<Prisma.CardCreateInput> = z.object
   question: z.string().trim().min(1, { message: "The question can't be empty" }),
   answer: z.string().trim().min(1, { message: "The answer can't be empty" }),
   box: z.lazy(() => BoxSchema).optional(),
-  userId: z.string(),
+  userId: z.string().trim().min(1, { message: "The user id can't be empty" }),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  lastAnswered: z.coerce.date().optional().nullable(),
+  answeredCorrectly: z.number().int().nonnegative().optional(),
+  answeredWrongly: z.number().int().nonnegative().optional(),
   collection: z.lazy(() => CollectionCreateNestedOneWithoutCardsInputSchema)
 }).strict();
 
@@ -321,9 +421,14 @@ export const CardUncheckedCreateInputSchema: z.ZodType<Prisma.CardUncheckedCreat
   id: z.string().cuid().optional(),
   question: z.string().trim().min(1, { message: "The question can't be empty" }),
   answer: z.string().trim().min(1, { message: "The answer can't be empty" }),
-  collectionId: z.string(),
+  collectionId: z.string().trim().min(1, { message: "The collection id can't be empty" }),
   box: z.lazy(() => BoxSchema).optional(),
-  userId: z.string()
+  userId: z.string().trim().min(1, { message: "The user id can't be empty" }),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  lastAnswered: z.coerce.date().optional().nullable(),
+  answeredCorrectly: z.number().int().nonnegative().optional(),
+  answeredWrongly: z.number().int().nonnegative().optional()
 }).strict();
 
 export const CardUpdateInputSchema: z.ZodType<Prisma.CardUpdateInput> = z.object({
@@ -331,7 +436,12 @@ export const CardUpdateInputSchema: z.ZodType<Prisma.CardUpdateInput> = z.object
   question: z.union([ z.string().trim().min(1, { message: "The question can't be empty" }),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   answer: z.union([ z.string().trim().min(1, { message: "The answer can't be empty" }),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   box: z.union([ z.lazy(() => BoxSchema),z.lazy(() => EnumBoxFieldUpdateOperationsInputSchema) ]).optional(),
-  userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  userId: z.union([ z.string().trim().min(1, { message: "The user id can't be empty" }),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  lastAnswered: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  answeredCorrectly: z.union([ z.number().int().nonnegative(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  answeredWrongly: z.union([ z.number().int().nonnegative(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   collection: z.lazy(() => CollectionUpdateOneRequiredWithoutCardsNestedInputSchema).optional()
 }).strict();
 
@@ -339,18 +449,28 @@ export const CardUncheckedUpdateInputSchema: z.ZodType<Prisma.CardUncheckedUpdat
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   question: z.union([ z.string().trim().min(1, { message: "The question can't be empty" }),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   answer: z.union([ z.string().trim().min(1, { message: "The answer can't be empty" }),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  collectionId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  collectionId: z.union([ z.string().trim().min(1, { message: "The collection id can't be empty" }),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   box: z.union([ z.lazy(() => BoxSchema),z.lazy(() => EnumBoxFieldUpdateOperationsInputSchema) ]).optional(),
-  userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  userId: z.union([ z.string().trim().min(1, { message: "The user id can't be empty" }),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  lastAnswered: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  answeredCorrectly: z.union([ z.number().int().nonnegative(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  answeredWrongly: z.union([ z.number().int().nonnegative(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const CardCreateManyInputSchema: z.ZodType<Prisma.CardCreateManyInput> = z.object({
   id: z.string().cuid().optional(),
   question: z.string().trim().min(1, { message: "The question can't be empty" }),
   answer: z.string().trim().min(1, { message: "The answer can't be empty" }),
-  collectionId: z.string(),
+  collectionId: z.string().trim().min(1, { message: "The collection id can't be empty" }),
   box: z.lazy(() => BoxSchema).optional(),
-  userId: z.string()
+  userId: z.string().trim().min(1, { message: "The user id can't be empty" }),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  lastAnswered: z.coerce.date().optional().nullable(),
+  answeredCorrectly: z.number().int().nonnegative().optional(),
+  answeredWrongly: z.number().int().nonnegative().optional()
 }).strict();
 
 export const CardUpdateManyMutationInputSchema: z.ZodType<Prisma.CardUpdateManyMutationInput> = z.object({
@@ -358,16 +478,26 @@ export const CardUpdateManyMutationInputSchema: z.ZodType<Prisma.CardUpdateManyM
   question: z.union([ z.string().trim().min(1, { message: "The question can't be empty" }),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   answer: z.union([ z.string().trim().min(1, { message: "The answer can't be empty" }),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   box: z.union([ z.lazy(() => BoxSchema),z.lazy(() => EnumBoxFieldUpdateOperationsInputSchema) ]).optional(),
-  userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  userId: z.union([ z.string().trim().min(1, { message: "The user id can't be empty" }),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  lastAnswered: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  answeredCorrectly: z.union([ z.number().int().nonnegative(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  answeredWrongly: z.union([ z.number().int().nonnegative(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const CardUncheckedUpdateManyInputSchema: z.ZodType<Prisma.CardUncheckedUpdateManyInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   question: z.union([ z.string().trim().min(1, { message: "The question can't be empty" }),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   answer: z.union([ z.string().trim().min(1, { message: "The answer can't be empty" }),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  collectionId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  collectionId: z.union([ z.string().trim().min(1, { message: "The collection id can't be empty" }),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   box: z.union([ z.lazy(() => BoxSchema),z.lazy(() => EnumBoxFieldUpdateOperationsInputSchema) ]).optional(),
-  userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  userId: z.union([ z.string().trim().min(1, { message: "The user id can't be empty" }),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  lastAnswered: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  answeredCorrectly: z.union([ z.number().int().nonnegative(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  answeredWrongly: z.union([ z.number().int().nonnegative(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const StringFilterSchema: z.ZodType<Prisma.StringFilter> = z.object({
@@ -400,6 +530,39 @@ export const StringNullableFilterSchema: z.ZodType<Prisma.StringNullableFilter> 
   not: z.union([ z.string(),z.lazy(() => NestedStringNullableFilterSchema) ]).optional().nullable(),
 }).strict();
 
+export const DateTimeFilterSchema: z.ZodType<Prisma.DateTimeFilter> = z.object({
+  equals: z.coerce.date().optional(),
+  in: z.coerce.date().array().optional(),
+  notIn: z.coerce.date().array().optional(),
+  lt: z.coerce.date().optional(),
+  lte: z.coerce.date().optional(),
+  gt: z.coerce.date().optional(),
+  gte: z.coerce.date().optional(),
+  not: z.union([ z.coerce.date(),z.lazy(() => NestedDateTimeFilterSchema) ]).optional(),
+}).strict();
+
+export const IntFilterSchema: z.ZodType<Prisma.IntFilter> = z.object({
+  equals: z.number().optional(),
+  in: z.number().array().optional(),
+  notIn: z.number().array().optional(),
+  lt: z.number().optional(),
+  lte: z.number().optional(),
+  gt: z.number().optional(),
+  gte: z.number().optional(),
+  not: z.union([ z.number(),z.lazy(() => NestedIntFilterSchema) ]).optional(),
+}).strict();
+
+export const DateTimeNullableFilterSchema: z.ZodType<Prisma.DateTimeNullableFilter> = z.object({
+  equals: z.coerce.date().optional().nullable(),
+  in: z.coerce.date().array().optional().nullable(),
+  notIn: z.coerce.date().array().optional().nullable(),
+  lt: z.coerce.date().optional(),
+  lte: z.coerce.date().optional(),
+  gt: z.coerce.date().optional(),
+  gte: z.coerce.date().optional(),
+  not: z.union([ z.coerce.date(),z.lazy(() => NestedDateTimeNullableFilterSchema) ]).optional().nullable(),
+}).strict();
+
 export const CardListRelationFilterSchema: z.ZodType<Prisma.CardListRelationFilter> = z.object({
   every: z.lazy(() => CardWhereInputSchema).optional(),
   some: z.lazy(() => CardWhereInputSchema).optional(),
@@ -424,21 +587,41 @@ export const CollectionCountOrderByAggregateInputSchema: z.ZodType<Prisma.Collec
   id: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
   description: z.lazy(() => SortOrderSchema).optional(),
-  userId: z.lazy(() => SortOrderSchema).optional()
+  userId: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  sessionsCompeted: z.lazy(() => SortOrderSchema).optional(),
+  lastSession: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const CollectionAvgOrderByAggregateInputSchema: z.ZodType<Prisma.CollectionAvgOrderByAggregateInput> = z.object({
+  sessionsCompeted: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const CollectionMaxOrderByAggregateInputSchema: z.ZodType<Prisma.CollectionMaxOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
   description: z.lazy(() => SortOrderSchema).optional(),
-  userId: z.lazy(() => SortOrderSchema).optional()
+  userId: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  sessionsCompeted: z.lazy(() => SortOrderSchema).optional(),
+  lastSession: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const CollectionMinOrderByAggregateInputSchema: z.ZodType<Prisma.CollectionMinOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
   description: z.lazy(() => SortOrderSchema).optional(),
-  userId: z.lazy(() => SortOrderSchema).optional()
+  userId: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  sessionsCompeted: z.lazy(() => SortOrderSchema).optional(),
+  lastSession: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const CollectionSumOrderByAggregateInputSchema: z.ZodType<Prisma.CollectionSumOrderByAggregateInput> = z.object({
+  sessionsCompeted: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const StringWithAggregatesFilterSchema: z.ZodType<Prisma.StringWithAggregatesFilter> = z.object({
@@ -477,6 +660,50 @@ export const StringNullableWithAggregatesFilterSchema: z.ZodType<Prisma.StringNu
   _max: z.lazy(() => NestedStringNullableFilterSchema).optional()
 }).strict();
 
+export const DateTimeWithAggregatesFilterSchema: z.ZodType<Prisma.DateTimeWithAggregatesFilter> = z.object({
+  equals: z.coerce.date().optional(),
+  in: z.coerce.date().array().optional(),
+  notIn: z.coerce.date().array().optional(),
+  lt: z.coerce.date().optional(),
+  lte: z.coerce.date().optional(),
+  gt: z.coerce.date().optional(),
+  gte: z.coerce.date().optional(),
+  not: z.union([ z.coerce.date(),z.lazy(() => NestedDateTimeWithAggregatesFilterSchema) ]).optional(),
+  _count: z.lazy(() => NestedIntFilterSchema).optional(),
+  _min: z.lazy(() => NestedDateTimeFilterSchema).optional(),
+  _max: z.lazy(() => NestedDateTimeFilterSchema).optional()
+}).strict();
+
+export const IntWithAggregatesFilterSchema: z.ZodType<Prisma.IntWithAggregatesFilter> = z.object({
+  equals: z.number().optional(),
+  in: z.number().array().optional(),
+  notIn: z.number().array().optional(),
+  lt: z.number().optional(),
+  lte: z.number().optional(),
+  gt: z.number().optional(),
+  gte: z.number().optional(),
+  not: z.union([ z.number(),z.lazy(() => NestedIntWithAggregatesFilterSchema) ]).optional(),
+  _count: z.lazy(() => NestedIntFilterSchema).optional(),
+  _avg: z.lazy(() => NestedFloatFilterSchema).optional(),
+  _sum: z.lazy(() => NestedIntFilterSchema).optional(),
+  _min: z.lazy(() => NestedIntFilterSchema).optional(),
+  _max: z.lazy(() => NestedIntFilterSchema).optional()
+}).strict();
+
+export const DateTimeNullableWithAggregatesFilterSchema: z.ZodType<Prisma.DateTimeNullableWithAggregatesFilter> = z.object({
+  equals: z.coerce.date().optional().nullable(),
+  in: z.coerce.date().array().optional().nullable(),
+  notIn: z.coerce.date().array().optional().nullable(),
+  lt: z.coerce.date().optional(),
+  lte: z.coerce.date().optional(),
+  gt: z.coerce.date().optional(),
+  gte: z.coerce.date().optional(),
+  not: z.union([ z.coerce.date(),z.lazy(() => NestedDateTimeNullableWithAggregatesFilterSchema) ]).optional().nullable(),
+  _count: z.lazy(() => NestedIntNullableFilterSchema).optional(),
+  _min: z.lazy(() => NestedDateTimeNullableFilterSchema).optional(),
+  _max: z.lazy(() => NestedDateTimeNullableFilterSchema).optional()
+}).strict();
+
 export const EnumBoxFilterSchema: z.ZodType<Prisma.EnumBoxFilter> = z.object({
   equals: z.lazy(() => BoxSchema).optional(),
   in: z.lazy(() => BoxSchema).array().optional(),
@@ -501,7 +728,17 @@ export const CardCountOrderByAggregateInputSchema: z.ZodType<Prisma.CardCountOrd
   answer: z.lazy(() => SortOrderSchema).optional(),
   collectionId: z.lazy(() => SortOrderSchema).optional(),
   box: z.lazy(() => SortOrderSchema).optional(),
-  userId: z.lazy(() => SortOrderSchema).optional()
+  userId: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  lastAnswered: z.lazy(() => SortOrderSchema).optional(),
+  answeredCorrectly: z.lazy(() => SortOrderSchema).optional(),
+  answeredWrongly: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const CardAvgOrderByAggregateInputSchema: z.ZodType<Prisma.CardAvgOrderByAggregateInput> = z.object({
+  answeredCorrectly: z.lazy(() => SortOrderSchema).optional(),
+  answeredWrongly: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const CardMaxOrderByAggregateInputSchema: z.ZodType<Prisma.CardMaxOrderByAggregateInput> = z.object({
@@ -510,7 +747,12 @@ export const CardMaxOrderByAggregateInputSchema: z.ZodType<Prisma.CardMaxOrderBy
   answer: z.lazy(() => SortOrderSchema).optional(),
   collectionId: z.lazy(() => SortOrderSchema).optional(),
   box: z.lazy(() => SortOrderSchema).optional(),
-  userId: z.lazy(() => SortOrderSchema).optional()
+  userId: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  lastAnswered: z.lazy(() => SortOrderSchema).optional(),
+  answeredCorrectly: z.lazy(() => SortOrderSchema).optional(),
+  answeredWrongly: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const CardMinOrderByAggregateInputSchema: z.ZodType<Prisma.CardMinOrderByAggregateInput> = z.object({
@@ -519,7 +761,17 @@ export const CardMinOrderByAggregateInputSchema: z.ZodType<Prisma.CardMinOrderBy
   answer: z.lazy(() => SortOrderSchema).optional(),
   collectionId: z.lazy(() => SortOrderSchema).optional(),
   box: z.lazy(() => SortOrderSchema).optional(),
-  userId: z.lazy(() => SortOrderSchema).optional()
+  userId: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  lastAnswered: z.lazy(() => SortOrderSchema).optional(),
+  answeredCorrectly: z.lazy(() => SortOrderSchema).optional(),
+  answeredWrongly: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const CardSumOrderByAggregateInputSchema: z.ZodType<Prisma.CardSumOrderByAggregateInput> = z.object({
+  answeredCorrectly: z.lazy(() => SortOrderSchema).optional(),
+  answeredWrongly: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const EnumBoxWithAggregatesFilterSchema: z.ZodType<Prisma.EnumBoxWithAggregatesFilter> = z.object({
@@ -552,6 +804,22 @@ export const StringFieldUpdateOperationsInputSchema: z.ZodType<Prisma.StringFiel
 
 export const NullableStringFieldUpdateOperationsInputSchema: z.ZodType<Prisma.NullableStringFieldUpdateOperationsInput> = z.object({
   set: z.string().optional().nullable()
+}).strict();
+
+export const DateTimeFieldUpdateOperationsInputSchema: z.ZodType<Prisma.DateTimeFieldUpdateOperationsInput> = z.object({
+  set: z.coerce.date().optional()
+}).strict();
+
+export const IntFieldUpdateOperationsInputSchema: z.ZodType<Prisma.IntFieldUpdateOperationsInput> = z.object({
+  set: z.number().optional(),
+  increment: z.number().optional(),
+  decrement: z.number().optional(),
+  multiply: z.number().optional(),
+  divide: z.number().optional()
+}).strict();
+
+export const NullableDateTimeFieldUpdateOperationsInputSchema: z.ZodType<Prisma.NullableDateTimeFieldUpdateOperationsInput> = z.object({
+  set: z.coerce.date().optional().nullable()
 }).strict();
 
 export const CardUpdateManyWithoutCollectionNestedInputSchema: z.ZodType<Prisma.CardUpdateManyWithoutCollectionNestedInput> = z.object({
@@ -628,6 +896,39 @@ export const NestedStringNullableFilterSchema: z.ZodType<Prisma.NestedStringNull
   not: z.union([ z.string(),z.lazy(() => NestedStringNullableFilterSchema) ]).optional().nullable(),
 }).strict();
 
+export const NestedDateTimeFilterSchema: z.ZodType<Prisma.NestedDateTimeFilter> = z.object({
+  equals: z.coerce.date().optional(),
+  in: z.coerce.date().array().optional(),
+  notIn: z.coerce.date().array().optional(),
+  lt: z.coerce.date().optional(),
+  lte: z.coerce.date().optional(),
+  gt: z.coerce.date().optional(),
+  gte: z.coerce.date().optional(),
+  not: z.union([ z.coerce.date(),z.lazy(() => NestedDateTimeFilterSchema) ]).optional(),
+}).strict();
+
+export const NestedIntFilterSchema: z.ZodType<Prisma.NestedIntFilter> = z.object({
+  equals: z.number().optional(),
+  in: z.number().array().optional(),
+  notIn: z.number().array().optional(),
+  lt: z.number().optional(),
+  lte: z.number().optional(),
+  gt: z.number().optional(),
+  gte: z.number().optional(),
+  not: z.union([ z.number(),z.lazy(() => NestedIntFilterSchema) ]).optional(),
+}).strict();
+
+export const NestedDateTimeNullableFilterSchema: z.ZodType<Prisma.NestedDateTimeNullableFilter> = z.object({
+  equals: z.coerce.date().optional().nullable(),
+  in: z.coerce.date().array().optional().nullable(),
+  notIn: z.coerce.date().array().optional().nullable(),
+  lt: z.coerce.date().optional(),
+  lte: z.coerce.date().optional(),
+  gt: z.coerce.date().optional(),
+  gte: z.coerce.date().optional(),
+  not: z.union([ z.coerce.date(),z.lazy(() => NestedDateTimeNullableFilterSchema) ]).optional().nullable(),
+}).strict();
+
 export const NestedStringWithAggregatesFilterSchema: z.ZodType<Prisma.NestedStringWithAggregatesFilter> = z.object({
   equals: z.string().optional(),
   in: z.string().array().optional(),
@@ -643,17 +944,6 @@ export const NestedStringWithAggregatesFilterSchema: z.ZodType<Prisma.NestedStri
   _count: z.lazy(() => NestedIntFilterSchema).optional(),
   _min: z.lazy(() => NestedStringFilterSchema).optional(),
   _max: z.lazy(() => NestedStringFilterSchema).optional()
-}).strict();
-
-export const NestedIntFilterSchema: z.ZodType<Prisma.NestedIntFilter> = z.object({
-  equals: z.number().optional(),
-  in: z.number().array().optional(),
-  notIn: z.number().array().optional(),
-  lt: z.number().optional(),
-  lte: z.number().optional(),
-  gt: z.number().optional(),
-  gte: z.number().optional(),
-  not: z.union([ z.number(),z.lazy(() => NestedIntFilterSchema) ]).optional(),
 }).strict();
 
 export const NestedStringNullableWithAggregatesFilterSchema: z.ZodType<Prisma.NestedStringNullableWithAggregatesFilter> = z.object({
@@ -684,6 +974,61 @@ export const NestedIntNullableFilterSchema: z.ZodType<Prisma.NestedIntNullableFi
   not: z.union([ z.number(),z.lazy(() => NestedIntNullableFilterSchema) ]).optional().nullable(),
 }).strict();
 
+export const NestedDateTimeWithAggregatesFilterSchema: z.ZodType<Prisma.NestedDateTimeWithAggregatesFilter> = z.object({
+  equals: z.coerce.date().optional(),
+  in: z.coerce.date().array().optional(),
+  notIn: z.coerce.date().array().optional(),
+  lt: z.coerce.date().optional(),
+  lte: z.coerce.date().optional(),
+  gt: z.coerce.date().optional(),
+  gte: z.coerce.date().optional(),
+  not: z.union([ z.coerce.date(),z.lazy(() => NestedDateTimeWithAggregatesFilterSchema) ]).optional(),
+  _count: z.lazy(() => NestedIntFilterSchema).optional(),
+  _min: z.lazy(() => NestedDateTimeFilterSchema).optional(),
+  _max: z.lazy(() => NestedDateTimeFilterSchema).optional()
+}).strict();
+
+export const NestedIntWithAggregatesFilterSchema: z.ZodType<Prisma.NestedIntWithAggregatesFilter> = z.object({
+  equals: z.number().optional(),
+  in: z.number().array().optional(),
+  notIn: z.number().array().optional(),
+  lt: z.number().optional(),
+  lte: z.number().optional(),
+  gt: z.number().optional(),
+  gte: z.number().optional(),
+  not: z.union([ z.number(),z.lazy(() => NestedIntWithAggregatesFilterSchema) ]).optional(),
+  _count: z.lazy(() => NestedIntFilterSchema).optional(),
+  _avg: z.lazy(() => NestedFloatFilterSchema).optional(),
+  _sum: z.lazy(() => NestedIntFilterSchema).optional(),
+  _min: z.lazy(() => NestedIntFilterSchema).optional(),
+  _max: z.lazy(() => NestedIntFilterSchema).optional()
+}).strict();
+
+export const NestedFloatFilterSchema: z.ZodType<Prisma.NestedFloatFilter> = z.object({
+  equals: z.number().optional(),
+  in: z.number().array().optional(),
+  notIn: z.number().array().optional(),
+  lt: z.number().optional(),
+  lte: z.number().optional(),
+  gt: z.number().optional(),
+  gte: z.number().optional(),
+  not: z.union([ z.number(),z.lazy(() => NestedFloatFilterSchema) ]).optional(),
+}).strict();
+
+export const NestedDateTimeNullableWithAggregatesFilterSchema: z.ZodType<Prisma.NestedDateTimeNullableWithAggregatesFilter> = z.object({
+  equals: z.coerce.date().optional().nullable(),
+  in: z.coerce.date().array().optional().nullable(),
+  notIn: z.coerce.date().array().optional().nullable(),
+  lt: z.coerce.date().optional(),
+  lte: z.coerce.date().optional(),
+  gt: z.coerce.date().optional(),
+  gte: z.coerce.date().optional(),
+  not: z.union([ z.coerce.date(),z.lazy(() => NestedDateTimeNullableWithAggregatesFilterSchema) ]).optional().nullable(),
+  _count: z.lazy(() => NestedIntNullableFilterSchema).optional(),
+  _min: z.lazy(() => NestedDateTimeNullableFilterSchema).optional(),
+  _max: z.lazy(() => NestedDateTimeNullableFilterSchema).optional()
+}).strict();
+
 export const NestedEnumBoxFilterSchema: z.ZodType<Prisma.NestedEnumBoxFilter> = z.object({
   equals: z.lazy(() => BoxSchema).optional(),
   in: z.lazy(() => BoxSchema).array().optional(),
@@ -706,7 +1051,12 @@ export const CardCreateWithoutCollectionInputSchema: z.ZodType<Prisma.CardCreate
   question: z.string().trim().min(1, { message: "The question can't be empty" }),
   answer: z.string().trim().min(1, { message: "The answer can't be empty" }),
   box: z.lazy(() => BoxSchema).optional(),
-  userId: z.string()
+  userId: z.string().trim().min(1, { message: "The user id can't be empty" }),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  lastAnswered: z.coerce.date().optional().nullable(),
+  answeredCorrectly: z.number().int().nonnegative().optional(),
+  answeredWrongly: z.number().int().nonnegative().optional()
 }).strict();
 
 export const CardUncheckedCreateWithoutCollectionInputSchema: z.ZodType<Prisma.CardUncheckedCreateWithoutCollectionInput> = z.object({
@@ -714,7 +1064,12 @@ export const CardUncheckedCreateWithoutCollectionInputSchema: z.ZodType<Prisma.C
   question: z.string().trim().min(1, { message: "The question can't be empty" }),
   answer: z.string().trim().min(1, { message: "The answer can't be empty" }),
   box: z.lazy(() => BoxSchema).optional(),
-  userId: z.string()
+  userId: z.string().trim().min(1, { message: "The user id can't be empty" }),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  lastAnswered: z.coerce.date().optional().nullable(),
+  answeredCorrectly: z.number().int().nonnegative().optional(),
+  answeredWrongly: z.number().int().nonnegative().optional()
 }).strict();
 
 export const CardCreateOrConnectWithoutCollectionInputSchema: z.ZodType<Prisma.CardCreateOrConnectWithoutCollectionInput> = z.object({
@@ -753,20 +1108,33 @@ export const CardScalarWhereInputSchema: z.ZodType<Prisma.CardScalarWhereInput> 
   collectionId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   box: z.union([ z.lazy(() => EnumBoxFilterSchema),z.lazy(() => BoxSchema) ]).optional(),
   userId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  lastAnswered: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
+  answeredCorrectly: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  answeredWrongly: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
 }).strict();
 
 export const CollectionCreateWithoutCardsInputSchema: z.ZodType<Prisma.CollectionCreateWithoutCardsInput> = z.object({
   id: z.string().cuid().optional(),
   name: z.string().trim().min(1, { message: "The name can't be empty" }),
   description: z.string().trim().optional().nullable(),
-  userId: z.string()
+  userId: z.string().trim().min(1, { message: "The user id can't be empty" }),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  sessionsCompeted: z.number().int().nonnegative().optional(),
+  lastSession: z.coerce.date().optional().nullable()
 }).strict();
 
 export const CollectionUncheckedCreateWithoutCardsInputSchema: z.ZodType<Prisma.CollectionUncheckedCreateWithoutCardsInput> = z.object({
   id: z.string().cuid().optional(),
   name: z.string().trim().min(1, { message: "The name can't be empty" }),
   description: z.string().trim().optional().nullable(),
-  userId: z.string()
+  userId: z.string().trim().min(1, { message: "The user id can't be empty" }),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  sessionsCompeted: z.number().int().nonnegative().optional(),
+  lastSession: z.coerce.date().optional().nullable()
 }).strict();
 
 export const CollectionCreateOrConnectWithoutCardsInputSchema: z.ZodType<Prisma.CollectionCreateOrConnectWithoutCardsInput> = z.object({
@@ -789,14 +1157,22 @@ export const CollectionUpdateWithoutCardsInputSchema: z.ZodType<Prisma.Collectio
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string().trim().min(1, { message: "The name can't be empty" }),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string().trim(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  userId: z.union([ z.string().trim().min(1, { message: "The user id can't be empty" }),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  sessionsCompeted: z.union([ z.number().int().nonnegative(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  lastSession: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
 export const CollectionUncheckedUpdateWithoutCardsInputSchema: z.ZodType<Prisma.CollectionUncheckedUpdateWithoutCardsInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string().trim().min(1, { message: "The name can't be empty" }),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string().trim(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  userId: z.union([ z.string().trim().min(1, { message: "The user id can't be empty" }),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  sessionsCompeted: z.union([ z.number().int().nonnegative(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  lastSession: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
 export const CardCreateManyCollectionInputSchema: z.ZodType<Prisma.CardCreateManyCollectionInput> = z.object({
@@ -804,7 +1180,12 @@ export const CardCreateManyCollectionInputSchema: z.ZodType<Prisma.CardCreateMan
   question: z.string().trim().min(1, { message: "The question can't be empty" }),
   answer: z.string().trim().min(1, { message: "The answer can't be empty" }),
   box: z.lazy(() => BoxSchema).optional(),
-  userId: z.string()
+  userId: z.string().trim().min(1, { message: "The user id can't be empty" }),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  lastAnswered: z.coerce.date().optional().nullable(),
+  answeredCorrectly: z.number().int().nonnegative().optional(),
+  answeredWrongly: z.number().int().nonnegative().optional()
 }).strict();
 
 export const CardUpdateWithoutCollectionInputSchema: z.ZodType<Prisma.CardUpdateWithoutCollectionInput> = z.object({
@@ -812,7 +1193,12 @@ export const CardUpdateWithoutCollectionInputSchema: z.ZodType<Prisma.CardUpdate
   question: z.union([ z.string().trim().min(1, { message: "The question can't be empty" }),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   answer: z.union([ z.string().trim().min(1, { message: "The answer can't be empty" }),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   box: z.union([ z.lazy(() => BoxSchema),z.lazy(() => EnumBoxFieldUpdateOperationsInputSchema) ]).optional(),
-  userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  userId: z.union([ z.string().trim().min(1, { message: "The user id can't be empty" }),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  lastAnswered: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  answeredCorrectly: z.union([ z.number().int().nonnegative(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  answeredWrongly: z.union([ z.number().int().nonnegative(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const CardUncheckedUpdateWithoutCollectionInputSchema: z.ZodType<Prisma.CardUncheckedUpdateWithoutCollectionInput> = z.object({
@@ -820,7 +1206,12 @@ export const CardUncheckedUpdateWithoutCollectionInputSchema: z.ZodType<Prisma.C
   question: z.union([ z.string().trim().min(1, { message: "The question can't be empty" }),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   answer: z.union([ z.string().trim().min(1, { message: "The answer can't be empty" }),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   box: z.union([ z.lazy(() => BoxSchema),z.lazy(() => EnumBoxFieldUpdateOperationsInputSchema) ]).optional(),
-  userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  userId: z.union([ z.string().trim().min(1, { message: "The user id can't be empty" }),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  lastAnswered: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  answeredCorrectly: z.union([ z.number().int().nonnegative(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  answeredWrongly: z.union([ z.number().int().nonnegative(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const CardUncheckedUpdateManyWithoutCollectionInputSchema: z.ZodType<Prisma.CardUncheckedUpdateManyWithoutCollectionInput> = z.object({
@@ -828,7 +1219,12 @@ export const CardUncheckedUpdateManyWithoutCollectionInputSchema: z.ZodType<Pris
   question: z.union([ z.string().trim().min(1, { message: "The question can't be empty" }),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   answer: z.union([ z.string().trim().min(1, { message: "The answer can't be empty" }),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   box: z.union([ z.lazy(() => BoxSchema),z.lazy(() => EnumBoxFieldUpdateOperationsInputSchema) ]).optional(),
-  userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  userId: z.union([ z.string().trim().min(1, { message: "The user id can't be empty" }),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  lastAnswered: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  answeredCorrectly: z.union([ z.number().int().nonnegative(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  answeredWrongly: z.union([ z.number().int().nonnegative(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 /////////////////////////////////////////
