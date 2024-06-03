@@ -12,7 +12,7 @@ import type { Prisma } from '@prisma/client';
 
 export const TransactionIsolationLevelSchema = z.enum(['ReadUncommitted','ReadCommitted','RepeatableRead','Serializable']);
 
-export const CollectionScalarFieldEnumSchema = z.enum(['id','name','description','userId','createdAt','updatedAt','sessionsCompeted','lastSession']);
+export const CollectionScalarFieldEnumSchema = z.enum(['id','name','description','userId','createdAt','updatedAt','sessions','lastSession']);
 
 export const CardScalarFieldEnumSchema = z.enum(['id','question','answer','collectionId','box','userId','createdAt','updatedAt','lastAnswered','answeredCorrectly','answeredWrongly']);
 
@@ -41,7 +41,7 @@ export const CollectionSchema = z.object({
   userId: z.string().trim().min(1, { message: "The user id can't be empty" }),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
-  sessionsCompeted: z.number().int().nonnegative(),
+  sessions: z.number().int().nonnegative(),
   lastSession: z.coerce.date().nullable(),
 })
 
@@ -99,7 +99,7 @@ export const CollectionSelectSchema: z.ZodType<Prisma.CollectionSelect> = z.obje
   userId: z.boolean().optional(),
   createdAt: z.boolean().optional(),
   updatedAt: z.boolean().optional(),
-  sessionsCompeted: z.boolean().optional(),
+  sessions: z.boolean().optional(),
   lastSession: z.boolean().optional(),
   cards: z.union([z.boolean(),z.lazy(() => CardFindManyArgsSchema)]).optional(),
   _count: z.union([z.boolean(),z.lazy(() => CollectionCountOutputTypeArgsSchema)]).optional(),
@@ -147,7 +147,7 @@ export const CollectionWhereInputSchema: z.ZodType<Prisma.CollectionWhereInput> 
   userId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
-  sessionsCompeted: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  sessions: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   lastSession: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
   cards: z.lazy(() => CardListRelationFilterSchema).optional()
 }).strict();
@@ -159,7 +159,7 @@ export const CollectionOrderByWithRelationInputSchema: z.ZodType<Prisma.Collecti
   userId: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
-  sessionsCompeted: z.lazy(() => SortOrderSchema).optional(),
+  sessions: z.lazy(() => SortOrderSchema).optional(),
   lastSession: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   cards: z.lazy(() => CardOrderByRelationAggregateInputSchema).optional()
 }).strict();
@@ -187,7 +187,7 @@ export const CollectionWhereUniqueInputSchema: z.ZodType<Prisma.CollectionWhereU
   userId: z.union([ z.lazy(() => StringFilterSchema),z.string().trim().min(1, { message: "The user id can't be empty" }) ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
-  sessionsCompeted: z.union([ z.lazy(() => IntFilterSchema),z.number().int().nonnegative() ]).optional(),
+  sessions: z.union([ z.lazy(() => IntFilterSchema),z.number().int().nonnegative() ]).optional(),
   lastSession: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
   cards: z.lazy(() => CardListRelationFilterSchema).optional()
 }).strict());
@@ -199,7 +199,7 @@ export const CollectionOrderByWithAggregationInputSchema: z.ZodType<Prisma.Colle
   userId: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
-  sessionsCompeted: z.lazy(() => SortOrderSchema).optional(),
+  sessions: z.lazy(() => SortOrderSchema).optional(),
   lastSession: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   _count: z.lazy(() => CollectionCountOrderByAggregateInputSchema).optional(),
   _avg: z.lazy(() => CollectionAvgOrderByAggregateInputSchema).optional(),
@@ -218,7 +218,7 @@ export const CollectionScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.Co
   userId: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
-  sessionsCompeted: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
+  sessions: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
   lastSession: z.union([ z.lazy(() => DateTimeNullableWithAggregatesFilterSchema),z.coerce.date() ]).optional().nullable(),
 }).strict();
 
@@ -329,7 +329,7 @@ export const CollectionCreateInputSchema: z.ZodType<Prisma.CollectionCreateInput
   userId: z.string().trim().min(1, { message: "The user id can't be empty" }),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
-  sessionsCompeted: z.number().int().nonnegative().optional(),
+  sessions: z.number().int().nonnegative().optional(),
   lastSession: z.coerce.date().optional().nullable(),
   cards: z.lazy(() => CardCreateNestedManyWithoutCollectionInputSchema).optional()
 }).strict();
@@ -341,7 +341,7 @@ export const CollectionUncheckedCreateInputSchema: z.ZodType<Prisma.CollectionUn
   userId: z.string().trim().min(1, { message: "The user id can't be empty" }),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
-  sessionsCompeted: z.number().int().nonnegative().optional(),
+  sessions: z.number().int().nonnegative().optional(),
   lastSession: z.coerce.date().optional().nullable(),
   cards: z.lazy(() => CardUncheckedCreateNestedManyWithoutCollectionInputSchema).optional()
 }).strict();
@@ -353,7 +353,7 @@ export const CollectionUpdateInputSchema: z.ZodType<Prisma.CollectionUpdateInput
   userId: z.union([ z.string().trim().min(1, { message: "The user id can't be empty" }),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  sessionsCompeted: z.union([ z.number().int().nonnegative(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  sessions: z.union([ z.number().int().nonnegative(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   lastSession: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   cards: z.lazy(() => CardUpdateManyWithoutCollectionNestedInputSchema).optional()
 }).strict();
@@ -365,7 +365,7 @@ export const CollectionUncheckedUpdateInputSchema: z.ZodType<Prisma.CollectionUn
   userId: z.union([ z.string().trim().min(1, { message: "The user id can't be empty" }),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  sessionsCompeted: z.union([ z.number().int().nonnegative(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  sessions: z.union([ z.number().int().nonnegative(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   lastSession: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   cards: z.lazy(() => CardUncheckedUpdateManyWithoutCollectionNestedInputSchema).optional()
 }).strict();
@@ -377,7 +377,7 @@ export const CollectionCreateManyInputSchema: z.ZodType<Prisma.CollectionCreateM
   userId: z.string().trim().min(1, { message: "The user id can't be empty" }),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
-  sessionsCompeted: z.number().int().nonnegative().optional(),
+  sessions: z.number().int().nonnegative().optional(),
   lastSession: z.coerce.date().optional().nullable()
 }).strict();
 
@@ -388,7 +388,7 @@ export const CollectionUpdateManyMutationInputSchema: z.ZodType<Prisma.Collectio
   userId: z.union([ z.string().trim().min(1, { message: "The user id can't be empty" }),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  sessionsCompeted: z.union([ z.number().int().nonnegative(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  sessions: z.union([ z.number().int().nonnegative(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   lastSession: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
@@ -399,7 +399,7 @@ export const CollectionUncheckedUpdateManyInputSchema: z.ZodType<Prisma.Collecti
   userId: z.union([ z.string().trim().min(1, { message: "The user id can't be empty" }),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  sessionsCompeted: z.union([ z.number().int().nonnegative(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  sessions: z.union([ z.number().int().nonnegative(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   lastSession: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
@@ -590,12 +590,12 @@ export const CollectionCountOrderByAggregateInputSchema: z.ZodType<Prisma.Collec
   userId: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
-  sessionsCompeted: z.lazy(() => SortOrderSchema).optional(),
+  sessions: z.lazy(() => SortOrderSchema).optional(),
   lastSession: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const CollectionAvgOrderByAggregateInputSchema: z.ZodType<Prisma.CollectionAvgOrderByAggregateInput> = z.object({
-  sessionsCompeted: z.lazy(() => SortOrderSchema).optional()
+  sessions: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const CollectionMaxOrderByAggregateInputSchema: z.ZodType<Prisma.CollectionMaxOrderByAggregateInput> = z.object({
@@ -605,7 +605,7 @@ export const CollectionMaxOrderByAggregateInputSchema: z.ZodType<Prisma.Collecti
   userId: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
-  sessionsCompeted: z.lazy(() => SortOrderSchema).optional(),
+  sessions: z.lazy(() => SortOrderSchema).optional(),
   lastSession: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
@@ -616,12 +616,12 @@ export const CollectionMinOrderByAggregateInputSchema: z.ZodType<Prisma.Collecti
   userId: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
-  sessionsCompeted: z.lazy(() => SortOrderSchema).optional(),
+  sessions: z.lazy(() => SortOrderSchema).optional(),
   lastSession: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const CollectionSumOrderByAggregateInputSchema: z.ZodType<Prisma.CollectionSumOrderByAggregateInput> = z.object({
-  sessionsCompeted: z.lazy(() => SortOrderSchema).optional()
+  sessions: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const StringWithAggregatesFilterSchema: z.ZodType<Prisma.StringWithAggregatesFilter> = z.object({
@@ -1122,7 +1122,7 @@ export const CollectionCreateWithoutCardsInputSchema: z.ZodType<Prisma.Collectio
   userId: z.string().trim().min(1, { message: "The user id can't be empty" }),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
-  sessionsCompeted: z.number().int().nonnegative().optional(),
+  sessions: z.number().int().nonnegative().optional(),
   lastSession: z.coerce.date().optional().nullable()
 }).strict();
 
@@ -1133,7 +1133,7 @@ export const CollectionUncheckedCreateWithoutCardsInputSchema: z.ZodType<Prisma.
   userId: z.string().trim().min(1, { message: "The user id can't be empty" }),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
-  sessionsCompeted: z.number().int().nonnegative().optional(),
+  sessions: z.number().int().nonnegative().optional(),
   lastSession: z.coerce.date().optional().nullable()
 }).strict();
 
@@ -1160,7 +1160,7 @@ export const CollectionUpdateWithoutCardsInputSchema: z.ZodType<Prisma.Collectio
   userId: z.union([ z.string().trim().min(1, { message: "The user id can't be empty" }),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  sessionsCompeted: z.union([ z.number().int().nonnegative(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  sessions: z.union([ z.number().int().nonnegative(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   lastSession: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
@@ -1171,7 +1171,7 @@ export const CollectionUncheckedUpdateWithoutCardsInputSchema: z.ZodType<Prisma.
   userId: z.union([ z.string().trim().min(1, { message: "The user id can't be empty" }),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  sessionsCompeted: z.union([ z.number().int().nonnegative(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  sessions: z.union([ z.number().int().nonnegative(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   lastSession: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 

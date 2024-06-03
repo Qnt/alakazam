@@ -5,6 +5,7 @@ import { Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import {
+  BoxSchema,
   CardCreateInputSchema,
   CardUpdateInputSchema,
   CollectionCreateWithoutCardsInputSchema,
@@ -248,6 +249,7 @@ export async function deleteCollection(id: Collection["id"]) {
     console.error("Something went wrong while deleting a collection");
     return {
       message: "An error occurred while deleting a collection",
+      success: false,
     };
   }
 
@@ -358,6 +360,7 @@ export async function updateCard(
         box: validatedFields.data.box,
         collection: validatedFields.data.collection,
         userId: validatedFields.data.userId,
+        updatedAt: new Date(),
       },
     });
   } catch (error) {
@@ -425,6 +428,7 @@ export async function deleteCard(card: Card) {
   } catch (error) {
     console.error("Something went wrong while deleting a card");
     return {
+      success: false,
       message: "An error occurred while deleting a card",
     };
   }
@@ -432,7 +436,7 @@ export async function deleteCard(card: Card) {
   redirect(`/collections/${card.collectionId}`);
 }
 
-export async function getSessionCompleted(collectionId: Collection["id"]) {
+export async function getSessions(collectionId: Collection["id"]) {
   const { userId } = auth();
 
   if (!userId) {
@@ -445,25 +449,25 @@ export async function getSessionCompleted(collectionId: Collection["id"]) {
       userId,
     },
     select: {
-      sessionsCompeted: true,
+      sessions: true,
     },
   });
 
   if (!currentSession) {
-    throw new Error("Collection not found");
+    throw new Error("Session not found");
   }
 
-  return currentSession.sessionsCompeted;
+  return currentSession.sessions;
 }
 
 export async function getCurrentSession(collectionId: Collection["id"]) {
-  const sessionsCompleted = await getSessionCompleted(collectionId);
-  return sessionsCompleted + 1;
+  const sessions = await getSessions(collectionId);
+  return sessions + 1;
 }
 
 export async function getCardsForSession(
   collectionId: Collection["id"],
-  currentSession: Collection["sessionsCompeted"],
+  currentSession: Collection["sessions"],
 ): Promise<Card[]> {
   const { userId } = auth();
 
@@ -490,4 +494,73 @@ export async function getCardsForSession(
   });
 
   return cards;
+}
+
+export async function promoteCard(card: Card) {
+  const { userId } = auth();
+
+  if (!userId) {
+    throw new Error("You must be signed in to perform this action");
+  }
+
+  const newBox =
+    card.box === BoxSchema.options[BoxSchema.options.length - 1]
+      ? card.box
+      : BoxSchema.options[BoxSchema.options.indexOf(card.box) + 1];
+
+  try {
+    await db.card.update({
+      where: {
+        id: card.id,
+      },
+      data: {
+        lastAnswered: new Date(),
+        answeredCorrectly: card.answeredCorrectly + 1,
+        box: newBox,
+      },
+    });
+
+    return {
+      success: true,
+      message: "The card has been promoted",
+    };
+  } catch (error) {
+    console.error("Something went wrong while promoting the card", error);
+    return {
+      success: false,
+      message: "An error occurred while promoting the card",
+    };
+  }
+}
+
+export async function demoteCard(card: Card) {
+  const { userId } = auth();
+
+  if (!userId) {
+    throw new Error("You must be signed in to perform this action");
+  }
+
+  try {
+    await db.card.update({
+      where: {
+        id: card.id,
+      },
+      data: {
+        lastAnswered: new Date(),
+        box: BoxSchema.options[0],
+        answeredWrongly: card.answeredWrongly + 1,
+      },
+    });
+
+    return {
+      success: true,
+      message: "The card has been demoted",
+    };
+  } catch (error) {
+    console.error("Something went wrong while demoting the card", error);
+    return {
+      success: false,
+      message: "An error occurred while demoting the card",
+    };
+  }
 }
