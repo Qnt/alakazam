@@ -26,6 +26,7 @@ model Collection {
   updatedAt   DateTime  @default(now()) @updatedAt
   sessions    Int       @default(0) /// @zod.number.int().nonnegative()
   lastSession DateTime? @default(now())
+  pinned      Boolean   @default(false)
 
   @@unique([name, userId])
   @@index([userId])

@@ -1,8 +1,11 @@
+import { type CollectionWhereInputSchema } from "prisma/generated/zod";
 import { getMyCollections } from "~/server/queries";
 import CollectionCard from "./collection-card";
 
-export default async function CollectionList() {
-  const collections = await getMyCollections();
+export default async function CollectionList(
+  props: Zod.infer<typeof CollectionWhereInputSchema> = {},
+) {
+  const collections = await getMyCollections(props);
 
   return (
     <>

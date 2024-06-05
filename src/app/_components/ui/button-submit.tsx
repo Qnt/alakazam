@@ -8,12 +8,7 @@ export default function ButtonSubmit(props: ButtonSubmitProps) {
   const { pending } = useFormStatus();
 
   return (
-    <button
-      type="submit"
-      className={props.className}
-      disabled={pending}
-      name={props.name}
-    >
+    <button {...props} type="submit">
       {pending ? (
         <span className="loading loading-spinner loading-md"></span>
       ) : (

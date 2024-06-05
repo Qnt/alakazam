@@ -22,7 +22,7 @@ export default function SessionList({ cards }: { cards: Card[] }) {
   return (
     <div className="mt-[24vh] flex w-full flex-col items-center gap-10 lg:max-w-xl">
       {IsLastCard ? (
-        <p className="text-center">You've reached the end!</p>
+        <p className="text-center">You have reached the end!</p>
       ) : (
         <>
           <SessionCard card={card} />

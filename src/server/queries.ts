@@ -12,6 +12,7 @@ import {
   CollectionUpdateWithoutCardsInputSchema,
   type Card,
   type Collection,
+  type CollectionWhereInputSchema,
 } from "prisma/generated/zod";
 import "server-only";
 import { type z } from "zod";
@@ -39,7 +40,11 @@ export type CardFormState = FormState & {
   };
 };
 
-export async function getMyCollections() {
+const MAX_PINNED_COLLECTIONS = 3;
+
+export async function getMyCollections(
+  args: z.infer<typeof CollectionWhereInputSchema> = {},
+) {
   const { userId } = auth();
 
   if (!userId) {
@@ -48,6 +53,7 @@ export async function getMyCollections() {
 
   const collections = await db.collection.findMany({
     where: {
+      ...args,
       userId,
     },
     orderBy: {
@@ -71,14 +77,6 @@ export async function getCollectionById(id: Collection["id"]) {
       userId,
     },
   });
-
-  if (collection?.userId !== userId) {
-    throw new Error("Unauthorized access");
-  }
-
-  if (!collection) {
-    throw new Error("Collection not found");
-  }
 
   return collection;
 }
@@ -256,6 +254,79 @@ export async function deleteCollection(id: Collection["id"]) {
   redirect("/collections");
 }
 
+export async function getMaxPinnableCollections() {
+  const { userId } = auth();
+
+  if (!userId) {
+    throw new Error("You must be signed in to perform this action");
+  }
+
+  return MAX_PINNED_COLLECTIONS;
+}
+
+export async function isPinnable() {
+  const { userId } = auth();
+
+  if (!userId) {
+    throw new Error("You must be signed in to perform this action");
+  }
+
+  try {
+    const count = await db.collection.count({
+      where: {
+        pinned: true,
+        userId,
+      },
+    });
+    return count < MAX_PINNED_COLLECTIONS;
+  } catch (error) {
+    console.error("Something went wrong while checking if pinnable");
+    return false;
+  }
+}
+
+export async function toggleCollectionPin(id: Collection["id"]) {
+  const { userId } = auth();
+
+  if (!userId) {
+    throw new Error("You must be signed in to perform this action");
+  }
+
+  const currentCollection = await getCollectionById(id);
+
+  if (currentCollection) {
+    if (!currentCollection.pinned && !(await isPinnable())) {
+      return {
+        success: false,
+        message:
+          "You can only pin up to 3 collections at a time. Please unpin some collections first.",
+      };
+    }
+
+    try {
+      await db.collection.update({
+        where: {
+          id,
+          userId,
+        },
+        data: {
+          pinned: !currentCollection.pinned,
+        },
+      });
+      return {
+        success: true,
+        message: "The collection has been pinned",
+      };
+    } catch (error) {
+      console.error("Something went wrong while pinning a collection");
+      return {
+        message: "An error occurred while pinning a collection",
+        success: false,
+      };
+    }
+  }
+}
+
 export async function createCard(
   collectionId: Collection["id"],
   _prevState: FormState,
@@ -399,14 +470,6 @@ export async function getCardById(id: Card["id"]) {
       userId,
     },
   });
-
-  if (card?.userId !== userId) {
-    throw new Error("Unauthorized access");
-  }
-
-  if (!card) {
-    throw new Error("Card not found");
-  }
 
   return card;
 }

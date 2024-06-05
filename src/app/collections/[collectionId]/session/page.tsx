@@ -1,6 +1,6 @@
 "use client";
 
-import { Card } from "prisma/generated/zod";
+import { type Card } from "prisma/generated/zod";
 import { useState } from "react";
 import SessionList from "~/app/_components/session-list";
 import { getCardsForSession, getCurrentSession } from "~/server/queries";

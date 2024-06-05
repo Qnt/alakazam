@@ -12,7 +12,7 @@ import type { Prisma } from '@prisma/client';
 
 export const TransactionIsolationLevelSchema = z.enum(['ReadUncommitted','ReadCommitted','RepeatableRead','Serializable']);
 
-export const CollectionScalarFieldEnumSchema = z.enum(['id','name','description','userId','createdAt','updatedAt','sessions','lastSession']);
+export const CollectionScalarFieldEnumSchema = z.enum(['id','name','description','userId','createdAt','updatedAt','sessions','lastSession','pinned']);
 
 export const CardScalarFieldEnumSchema = z.enum(['id','question','answer','collectionId','box','userId','createdAt','updatedAt','lastAnswered','answeredCorrectly','answeredWrongly']);
 
@@ -43,6 +43,7 @@ export const CollectionSchema = z.object({
   updatedAt: z.coerce.date(),
   sessions: z.number().int().nonnegative(),
   lastSession: z.coerce.date().nullable(),
+  pinned: z.boolean(),
 })
 
 export type Collection = z.infer<typeof CollectionSchema>
@@ -101,6 +102,7 @@ export const CollectionSelectSchema: z.ZodType<Prisma.CollectionSelect> = z.obje
   updatedAt: z.boolean().optional(),
   sessions: z.boolean().optional(),
   lastSession: z.boolean().optional(),
+  pinned: z.boolean().optional(),
   cards: z.union([z.boolean(),z.lazy(() => CardFindManyArgsSchema)]).optional(),
   _count: z.union([z.boolean(),z.lazy(() => CollectionCountOutputTypeArgsSchema)]).optional(),
 }).strict()
@@ -149,6 +151,7 @@ export const CollectionWhereInputSchema: z.ZodType<Prisma.CollectionWhereInput> 
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   sessions: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   lastSession: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
+  pinned: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
   cards: z.lazy(() => CardListRelationFilterSchema).optional()
 }).strict();
 
@@ -161,6 +164,7 @@ export const CollectionOrderByWithRelationInputSchema: z.ZodType<Prisma.Collecti
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
   sessions: z.lazy(() => SortOrderSchema).optional(),
   lastSession: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  pinned: z.lazy(() => SortOrderSchema).optional(),
   cards: z.lazy(() => CardOrderByRelationAggregateInputSchema).optional()
 }).strict();
 
@@ -189,6 +193,7 @@ export const CollectionWhereUniqueInputSchema: z.ZodType<Prisma.CollectionWhereU
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   sessions: z.union([ z.lazy(() => IntFilterSchema),z.number().int().nonnegative() ]).optional(),
   lastSession: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
+  pinned: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
   cards: z.lazy(() => CardListRelationFilterSchema).optional()
 }).strict());
 
@@ -201,6 +206,7 @@ export const CollectionOrderByWithAggregationInputSchema: z.ZodType<Prisma.Colle
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
   sessions: z.lazy(() => SortOrderSchema).optional(),
   lastSession: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  pinned: z.lazy(() => SortOrderSchema).optional(),
   _count: z.lazy(() => CollectionCountOrderByAggregateInputSchema).optional(),
   _avg: z.lazy(() => CollectionAvgOrderByAggregateInputSchema).optional(),
   _max: z.lazy(() => CollectionMaxOrderByAggregateInputSchema).optional(),
@@ -220,6 +226,7 @@ export const CollectionScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.Co
   updatedAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
   sessions: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
   lastSession: z.union([ z.lazy(() => DateTimeNullableWithAggregatesFilterSchema),z.coerce.date() ]).optional().nullable(),
+  pinned: z.union([ z.lazy(() => BoolWithAggregatesFilterSchema),z.boolean() ]).optional(),
 }).strict();
 
 export const CardWhereInputSchema: z.ZodType<Prisma.CardWhereInput> = z.object({
@@ -331,6 +338,7 @@ export const CollectionCreateInputSchema: z.ZodType<Prisma.CollectionCreateInput
   updatedAt: z.coerce.date().optional(),
   sessions: z.number().int().nonnegative().optional(),
   lastSession: z.coerce.date().optional().nullable(),
+  pinned: z.boolean().optional(),
   cards: z.lazy(() => CardCreateNestedManyWithoutCollectionInputSchema).optional()
 }).strict();
 
@@ -343,6 +351,7 @@ export const CollectionUncheckedCreateInputSchema: z.ZodType<Prisma.CollectionUn
   updatedAt: z.coerce.date().optional(),
   sessions: z.number().int().nonnegative().optional(),
   lastSession: z.coerce.date().optional().nullable(),
+  pinned: z.boolean().optional(),
   cards: z.lazy(() => CardUncheckedCreateNestedManyWithoutCollectionInputSchema).optional()
 }).strict();
 
@@ -355,6 +364,7 @@ export const CollectionUpdateInputSchema: z.ZodType<Prisma.CollectionUpdateInput
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   sessions: z.union([ z.number().int().nonnegative(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   lastSession: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  pinned: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   cards: z.lazy(() => CardUpdateManyWithoutCollectionNestedInputSchema).optional()
 }).strict();
 
@@ -367,6 +377,7 @@ export const CollectionUncheckedUpdateInputSchema: z.ZodType<Prisma.CollectionUn
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   sessions: z.union([ z.number().int().nonnegative(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   lastSession: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  pinned: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   cards: z.lazy(() => CardUncheckedUpdateManyWithoutCollectionNestedInputSchema).optional()
 }).strict();
 
@@ -378,7 +389,8 @@ export const CollectionCreateManyInputSchema: z.ZodType<Prisma.CollectionCreateM
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   sessions: z.number().int().nonnegative().optional(),
-  lastSession: z.coerce.date().optional().nullable()
+  lastSession: z.coerce.date().optional().nullable(),
+  pinned: z.boolean().optional()
 }).strict();
 
 export const CollectionUpdateManyMutationInputSchema: z.ZodType<Prisma.CollectionUpdateManyMutationInput> = z.object({
@@ -390,6 +402,7 @@ export const CollectionUpdateManyMutationInputSchema: z.ZodType<Prisma.Collectio
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   sessions: z.union([ z.number().int().nonnegative(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   lastSession: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  pinned: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const CollectionUncheckedUpdateManyInputSchema: z.ZodType<Prisma.CollectionUncheckedUpdateManyInput> = z.object({
@@ -401,6 +414,7 @@ export const CollectionUncheckedUpdateManyInputSchema: z.ZodType<Prisma.Collecti
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   sessions: z.union([ z.number().int().nonnegative(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   lastSession: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  pinned: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const CardCreateInputSchema: z.ZodType<Prisma.CardCreateInput> = z.object({
@@ -563,6 +577,11 @@ export const DateTimeNullableFilterSchema: z.ZodType<Prisma.DateTimeNullableFilt
   not: z.union([ z.coerce.date(),z.lazy(() => NestedDateTimeNullableFilterSchema) ]).optional().nullable(),
 }).strict();
 
+export const BoolFilterSchema: z.ZodType<Prisma.BoolFilter> = z.object({
+  equals: z.boolean().optional(),
+  not: z.union([ z.boolean(),z.lazy(() => NestedBoolFilterSchema) ]).optional(),
+}).strict();
+
 export const CardListRelationFilterSchema: z.ZodType<Prisma.CardListRelationFilter> = z.object({
   every: z.lazy(() => CardWhereInputSchema).optional(),
   some: z.lazy(() => CardWhereInputSchema).optional(),
@@ -591,7 +610,8 @@ export const CollectionCountOrderByAggregateInputSchema: z.ZodType<Prisma.Collec
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
   sessions: z.lazy(() => SortOrderSchema).optional(),
-  lastSession: z.lazy(() => SortOrderSchema).optional()
+  lastSession: z.lazy(() => SortOrderSchema).optional(),
+  pinned: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const CollectionAvgOrderByAggregateInputSchema: z.ZodType<Prisma.CollectionAvgOrderByAggregateInput> = z.object({
@@ -606,7 +626,8 @@ export const CollectionMaxOrderByAggregateInputSchema: z.ZodType<Prisma.Collecti
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
   sessions: z.lazy(() => SortOrderSchema).optional(),
-  lastSession: z.lazy(() => SortOrderSchema).optional()
+  lastSession: z.lazy(() => SortOrderSchema).optional(),
+  pinned: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const CollectionMinOrderByAggregateInputSchema: z.ZodType<Prisma.CollectionMinOrderByAggregateInput> = z.object({
@@ -617,7 +638,8 @@ export const CollectionMinOrderByAggregateInputSchema: z.ZodType<Prisma.Collecti
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
   sessions: z.lazy(() => SortOrderSchema).optional(),
-  lastSession: z.lazy(() => SortOrderSchema).optional()
+  lastSession: z.lazy(() => SortOrderSchema).optional(),
+  pinned: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const CollectionSumOrderByAggregateInputSchema: z.ZodType<Prisma.CollectionSumOrderByAggregateInput> = z.object({
@@ -702,6 +724,14 @@ export const DateTimeNullableWithAggregatesFilterSchema: z.ZodType<Prisma.DateTi
   _count: z.lazy(() => NestedIntNullableFilterSchema).optional(),
   _min: z.lazy(() => NestedDateTimeNullableFilterSchema).optional(),
   _max: z.lazy(() => NestedDateTimeNullableFilterSchema).optional()
+}).strict();
+
+export const BoolWithAggregatesFilterSchema: z.ZodType<Prisma.BoolWithAggregatesFilter> = z.object({
+  equals: z.boolean().optional(),
+  not: z.union([ z.boolean(),z.lazy(() => NestedBoolWithAggregatesFilterSchema) ]).optional(),
+  _count: z.lazy(() => NestedIntFilterSchema).optional(),
+  _min: z.lazy(() => NestedBoolFilterSchema).optional(),
+  _max: z.lazy(() => NestedBoolFilterSchema).optional()
 }).strict();
 
 export const EnumBoxFilterSchema: z.ZodType<Prisma.EnumBoxFilter> = z.object({
@@ -822,6 +852,10 @@ export const NullableDateTimeFieldUpdateOperationsInputSchema: z.ZodType<Prisma.
   set: z.coerce.date().optional().nullable()
 }).strict();
 
+export const BoolFieldUpdateOperationsInputSchema: z.ZodType<Prisma.BoolFieldUpdateOperationsInput> = z.object({
+  set: z.boolean().optional()
+}).strict();
+
 export const CardUpdateManyWithoutCollectionNestedInputSchema: z.ZodType<Prisma.CardUpdateManyWithoutCollectionNestedInput> = z.object({
   create: z.union([ z.lazy(() => CardCreateWithoutCollectionInputSchema),z.lazy(() => CardCreateWithoutCollectionInputSchema).array(),z.lazy(() => CardUncheckedCreateWithoutCollectionInputSchema),z.lazy(() => CardUncheckedCreateWithoutCollectionInputSchema).array() ]).optional(),
   connectOrCreate: z.union([ z.lazy(() => CardCreateOrConnectWithoutCollectionInputSchema),z.lazy(() => CardCreateOrConnectWithoutCollectionInputSchema).array() ]).optional(),
@@ -929,6 +963,11 @@ export const NestedDateTimeNullableFilterSchema: z.ZodType<Prisma.NestedDateTime
   not: z.union([ z.coerce.date(),z.lazy(() => NestedDateTimeNullableFilterSchema) ]).optional().nullable(),
 }).strict();
 
+export const NestedBoolFilterSchema: z.ZodType<Prisma.NestedBoolFilter> = z.object({
+  equals: z.boolean().optional(),
+  not: z.union([ z.boolean(),z.lazy(() => NestedBoolFilterSchema) ]).optional(),
+}).strict();
+
 export const NestedStringWithAggregatesFilterSchema: z.ZodType<Prisma.NestedStringWithAggregatesFilter> = z.object({
   equals: z.string().optional(),
   in: z.string().array().optional(),
@@ -1029,6 +1068,14 @@ export const NestedDateTimeNullableWithAggregatesFilterSchema: z.ZodType<Prisma.
   _max: z.lazy(() => NestedDateTimeNullableFilterSchema).optional()
 }).strict();
 
+export const NestedBoolWithAggregatesFilterSchema: z.ZodType<Prisma.NestedBoolWithAggregatesFilter> = z.object({
+  equals: z.boolean().optional(),
+  not: z.union([ z.boolean(),z.lazy(() => NestedBoolWithAggregatesFilterSchema) ]).optional(),
+  _count: z.lazy(() => NestedIntFilterSchema).optional(),
+  _min: z.lazy(() => NestedBoolFilterSchema).optional(),
+  _max: z.lazy(() => NestedBoolFilterSchema).optional()
+}).strict();
+
 export const NestedEnumBoxFilterSchema: z.ZodType<Prisma.NestedEnumBoxFilter> = z.object({
   equals: z.lazy(() => BoxSchema).optional(),
   in: z.lazy(() => BoxSchema).array().optional(),
@@ -1123,7 +1170,8 @@ export const CollectionCreateWithoutCardsInputSchema: z.ZodType<Prisma.Collectio
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   sessions: z.number().int().nonnegative().optional(),
-  lastSession: z.coerce.date().optional().nullable()
+  lastSession: z.coerce.date().optional().nullable(),
+  pinned: z.boolean().optional()
 }).strict();
 
 export const CollectionUncheckedCreateWithoutCardsInputSchema: z.ZodType<Prisma.CollectionUncheckedCreateWithoutCardsInput> = z.object({
@@ -1134,7 +1182,8 @@ export const CollectionUncheckedCreateWithoutCardsInputSchema: z.ZodType<Prisma.
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   sessions: z.number().int().nonnegative().optional(),
-  lastSession: z.coerce.date().optional().nullable()
+  lastSession: z.coerce.date().optional().nullable(),
+  pinned: z.boolean().optional()
 }).strict();
 
 export const CollectionCreateOrConnectWithoutCardsInputSchema: z.ZodType<Prisma.CollectionCreateOrConnectWithoutCardsInput> = z.object({
@@ -1162,6 +1211,7 @@ export const CollectionUpdateWithoutCardsInputSchema: z.ZodType<Prisma.Collectio
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   sessions: z.union([ z.number().int().nonnegative(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   lastSession: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  pinned: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const CollectionUncheckedUpdateWithoutCardsInputSchema: z.ZodType<Prisma.CollectionUncheckedUpdateWithoutCardsInput> = z.object({
@@ -1173,6 +1223,7 @@ export const CollectionUncheckedUpdateWithoutCardsInputSchema: z.ZodType<Prisma.
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   sessions: z.union([ z.number().int().nonnegative(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   lastSession: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  pinned: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const CardCreateManyCollectionInputSchema: z.ZodType<Prisma.CardCreateManyCollectionInput> = z.object({
