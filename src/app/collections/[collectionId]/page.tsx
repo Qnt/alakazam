@@ -5,6 +5,7 @@ import { type Collection } from "prisma/generated/zod";
 import CardList from "~/app/_components/card-list";
 import NewCardButton from "~/app/_components/new-card-button";
 import ButtonSubmit from "~/app/_components/ui/button-submit";
+import StartSession from "~/app/_components/ui/start-session";
 import {
   deleteCollection,
   getCollectionById,
@@ -100,12 +101,7 @@ export default async function CollectionPage({
           </ul>
         </div>
       </form>
-      <Link
-        href={`/collections/${collection.id}/session`}
-        className="btn btn-primary"
-      >
-        Start session
-      </Link>
+      <StartSession collectionId={params.collectionId} />
       <h2 className="grow overflow-hidden whitespace-nowrap p-2 text-xl font-bold">
         Cards
       </h2>

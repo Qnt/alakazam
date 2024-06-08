@@ -1,5 +1,6 @@
 import { type Collection } from "@prisma/client";
 import Link from "next/link";
+import StartSession from "./ui/start-session";
 
 export default function CollectionCard({
   collection,
@@ -23,12 +24,7 @@ export default function CollectionCard({
             View collection
           </Link>
 
-          <Link
-            href={`/collections/${collection.id}/session`}
-            className="btn btn-primary"
-          >
-            Start session
-          </Link>
+          <StartSession collectionId={collection.id} />
         </div>
       </div>
     </div>
