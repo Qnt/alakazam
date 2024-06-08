@@ -1,4 +1,4 @@
-import { EllipsisVertical, Pin, SquarePen, Trash2 } from "lucide-react";
+import { Ellipsis, Pin, SquarePen, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { type Collection } from "prisma/generated/zod";
@@ -25,7 +25,70 @@ export default async function CollectionPage({
   }
 
   return (
-    <div className="flex flex-col justify-between gap-2 lg:flex-row">
+    <div className="flex flex-col justify-between gap-2">
+      <form
+        className="flex items-center justify-between gap-4"
+        action={async (formData) => {
+          "use server";
+          if (formData.get("pin") === "pin") {
+            await toggleCollectionPin(collection.id);
+          } else if (formData.get("delete") === "delete") {
+            await deleteCollection(collection.id);
+          }
+        }}
+      >
+        <h2 className="truncate p-2 text-xl font-bold">{collection.name}</h2>
+        <div className="flex items-center justify-end gap-2">
+          <StartSession
+            collectionId={params.collectionId}
+            className="btn btn-primary tooltip tooltip-left"
+          >
+            <span className="hidden md:inline">Start session</span>
+          </StartSession>
+
+          <div className="dropdown dropdown-end">
+            <div tabIndex={0} role="button" className="btn btn-outline">
+              <Ellipsis />
+            </div>
+            <ul
+              tabIndex={0}
+              className="menu dropdown-content z-[1] w-52 rounded-box bg-base-100 p-2 shadow"
+            >
+              <li>
+                <Link
+                  href={`/collections/${collection.id}/edit`}
+                  className="btn btn-ghost justify-between"
+                >
+                  <span>Edit</span>
+                  <SquarePen />
+                </Link>
+              </li>
+              <li>
+                <ButtonSubmit
+                  className="btn btn-ghost justify-between"
+                  name="pin"
+                  value="pin"
+                  disabled={!(await isPinnable()) && !collection.pinned}
+                >
+                  <span>{collection.pinned ? "Unpin" : "Pin"}</span>
+                  <Pin />
+                </ButtonSubmit>
+              </li>
+              <li>
+                <ButtonSubmit
+                  className="btn btn-ghost justify-between text-error"
+                  name="delete"
+                  value="delete"
+                >
+                  <span>Delete</span>
+                  <Trash2 />
+                </ButtonSubmit>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </form>
+
       <div className="flex gap-2">
         <form className="form-control grow">
           <label className="input input-bordered flex grow items-center gap-2">
@@ -46,65 +109,7 @@ export default async function CollectionPage({
         </form>
         <NewCardButton collectionId={collection.id} />
       </div>
-      <form
-        className="flex items-center justify-between gap-4"
-        action={async (formData) => {
-          "use server";
-          if (formData.get("pin") === "pin") {
-            await toggleCollectionPin(collection.id);
-          } else if (formData.get("delete") === "delete") {
-            await deleteCollection(collection.id);
-          }
-        }}
-      >
-        <h2 className="grow overflow-hidden whitespace-nowrap p-2 text-xl font-bold">
-          {collection.name}
-        </h2>
-        <div className="dropdown dropdown-end">
-          <div tabIndex={0} role="button">
-            <EllipsisVertical />
-          </div>
-          <ul
-            tabIndex={0}
-            className="menu dropdown-content z-[1] w-52 rounded-box bg-base-100 p-2 shadow"
-          >
-            <li>
-              <Link
-                href={`/collections/${collection.id}/edit`}
-                className="btn btn-ghost justify-between"
-              >
-                <span>Edit</span>
-                <SquarePen />
-              </Link>
-            </li>
-            <li>
-              <ButtonSubmit
-                className="btn btn-ghost justify-between"
-                name="pin"
-                value="pin"
-                disabled={!(await isPinnable()) && !collection.pinned}
-              >
-                <span>{collection.pinned ? "Unpin" : "Pin"}</span>
-                <Pin />
-              </ButtonSubmit>
-            </li>
-            <li>
-              <ButtonSubmit
-                className="btn btn-ghost justify-between text-error"
-                name="delete"
-                value="delete"
-              >
-                <span>Delete</span>
-                <Trash2 />
-              </ButtonSubmit>
-            </li>
-          </ul>
-        </div>
-      </form>
-      <StartSession collectionId={params.collectionId} />
-      <h2 className="grow overflow-hidden whitespace-nowrap p-2 text-xl font-bold">
-        Cards
-      </h2>
+
       <CardList collectionId={params.collectionId} />
     </div>
   );

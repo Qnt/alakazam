@@ -1,21 +1,35 @@
 import { type Collection } from "@prisma/client";
-import clsx from "clsx";
+import { Play } from "lucide-react";
 import Link from "next/link";
 import { getCardsByCollectionId } from "~/server/queries";
 
+type StartSessionProps = {
+  collectionId: Collection["id"];
+  className?: string;
+  children?: React.ReactNode;
+};
+
 export default async function StartSession({
   collectionId,
-}: {
-  collectionId: Collection["id"];
-}) {
+  className,
+  children,
+}: StartSessionProps) {
   const cards = await getCardsByCollectionId(collectionId);
 
+  const hasCards = cards.length > 0;
+
   return (
-    <Link
-      href={`/collections/${collectionId}/session`}
-      className={clsx("btn btn-primary", cards.length === 0 && "btn-disabled")}
+    <div
+      className={`flex items-center ${className} ${!hasCards && "btn-disabled"}`}
+      data-tip="Start a new session"
     >
-      Start session
-    </Link>
+      <Link
+        className="flex items-center"
+        href={`/collections/${collectionId}/session`}
+      >
+        <Play />
+        {children}
+      </Link>
+    </div>
   );
 }

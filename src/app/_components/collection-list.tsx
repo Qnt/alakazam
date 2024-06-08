@@ -15,7 +15,7 @@ export default async function CollectionList(
         </div>
       )}
       {collections.length > 0 && (
-        <ul className="w-md md:w-none flex flex-col gap-4 md:grid md:grid-cols-[repeat(auto-fill,minmax(18rem,1fr))]">
+        <ul className="w-md md:w-none flex flex-col gap-4 md:grid md:grid-cols-[repeat(auto-fill,minmax(20rem,1fr))]">
           {collections.map((c) => {
             return <CollectionCard key={c.id} collection={c} />;
           })}
