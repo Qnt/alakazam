@@ -87,12 +87,13 @@ const NewCollectionModal = forwardRef<HTMLDialogElement, CollectionModalProps>(
                           Description (optional)
                         </span>
                       </div>
-                      <input
-                        type="text"
+                      <textarea
+                        className="textarea textarea-bordered h-24"
+                        autoFocus
                         placeholder="Description"
-                        className="input input-bordered w-full"
+                        aria-describedby="user-error"
                         name="description"
-                      />
+                      ></textarea>
                     </label>
                   </div>
                   <div className="flex-re flex flex-col gap-4 md:flex-row-reverse">

@@ -63,14 +63,13 @@ const NewCardModal = forwardRef<HTMLDialogElement, CardModalProps>(
                       <div className="label">
                         <span className="label-text">Question</span>
                       </div>
-                      <input
-                        type="text"
+                      <textarea
+                        className="textarea textarea-bordered h-24"
                         placeholder="Question"
-                        className="input input-bordered w-full"
                         name="question"
                         aria-describedby="user-error"
                         autoFocus
-                      />
+                      ></textarea>
                     </label>
                     <div
                       id="customer-error"
@@ -87,13 +86,13 @@ const NewCardModal = forwardRef<HTMLDialogElement, CardModalProps>(
                       <div className="label">
                         <span className="label-text">Answer</span>
                       </div>
-                      <input
-                        type="text"
+                      <textarea
+                        className="textarea textarea-bordered h-24"
                         placeholder="Answer"
-                        className="input input-bordered w-full"
                         name="answer"
                         aria-describedby="user-error"
-                      />
+                        autoFocus
+                      ></textarea>
                     </label>
                     <div
                       id="customer-error"
