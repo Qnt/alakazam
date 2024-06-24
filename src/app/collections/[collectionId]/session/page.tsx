@@ -1,37 +1,20 @@
-"use client";
-
-import { type Card } from "prisma/generated/zod";
-import { useState } from "react";
+import { type Collection } from "prisma/generated/zod";
 import SessionList from "~/app/_components/session-list";
 import { getCardsForSession, getCurrentSession } from "~/server/queries";
 
-export default function SessionPage({
+export default async function SessionPage({
   params,
 }: {
-  params: { collectionId: string };
+  params: { collectionId: Collection["id"] };
 }) {
-  const [cards, setCards] = useState<Card[]>([]);
-  const [isStarted, setIsStarted] = useState<boolean>();
+  const session = await getCurrentSession(params.collectionId);
+  const cards = await getCardsForSession(params.collectionId, session);
 
   return (
-    <div className="flex h-full flex-col items-center">
-      {cards.length > 0 && isStarted && <SessionList cards={cards} />}
-      {!isStarted && (
-        <button
-          type="button"
-          className="btn btn-primary"
-          onClick={async () => {
-            const session = await getCurrentSession(params.collectionId);
-            const cards = await getCardsForSession(
-              params.collectionId,
-              session,
-            );
-            setCards(cards);
-            setIsStarted(true);
-          }}
-        >
-          Start session
-        </button>
+    <div className="flex h-full flex-col items-center justify-center gap-4">
+      <h2>{`Session ${session}`}</h2>
+      {cards && (
+        <SessionList cards={cards} collectionId={params.collectionId} />
       )}
     </div>
   );

@@ -21,7 +21,6 @@ export default async function StartSession({
   return (
     <div
       className={`flex items-center ${className} ${!hasCards && "btn-disabled"}`}
-      data-tip="Start a new session"
     >
       <Link
         className="flex items-center"

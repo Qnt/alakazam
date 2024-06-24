@@ -531,7 +531,7 @@ export async function getCurrentSession(collectionId: Collection["id"]) {
 export async function getCardsForSession(
   collectionId: Collection["id"],
   currentSession: Collection["sessions"],
-): Promise<Card[]> {
+) {
   const { userId } = auth();
 
   if (!userId) {
@@ -546,17 +546,20 @@ export async function getCardsForSession(
     boxesToGet.push("ADVANCED");
   }
 
-  const cards = await db.card.findMany({
-    where: {
-      collectionId: collectionId,
-      userId,
-      box: {
-        in: boxesToGet,
+  try {
+    const cards = await db.card.findMany({
+      where: {
+        collectionId,
+        userId,
+        box: {
+          in: boxesToGet,
+        },
       },
-    },
-  });
-
-  return cards;
+    });
+    return cards;
+  } catch (error) {
+    console.error("Something went wrong while getting cards for session");
+  }
 }
 
 export async function promoteCard(card: Card) {
@@ -626,4 +629,39 @@ export async function demoteCard(card: Card) {
       message: "An error occurred while demoting the card",
     };
   }
+}
+
+export async function nextSession(collectionId: Collection["id"]) {
+  const { userId } = auth();
+
+  if (!userId) {
+    throw new Error("You must be signed in to perform this action");
+  }
+
+  const currentSession = await getCurrentSession(collectionId);
+
+  try {
+    await db.collection.update({
+      where: {
+        id: collectionId,
+        userId,
+      },
+      data: {
+        sessions: currentSession,
+      },
+    });
+
+    revalidatePath(`/collections/${collectionId}/session`);
+  } catch (error) {
+    console.error("Something went wrong while updating the session", error);
+    return {
+      success: false,
+      message: "An error occurred while updating the session",
+    };
+  }
+
+  return {
+    success: true,
+    message: "The session has been updated",
+  };
 }
