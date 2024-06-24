@@ -5,13 +5,13 @@ import { getCollectionById } from "~/server/queries";
 export default async function Page({
   params,
 }: {
-  params: { id: Collection["id"] };
+  params: { collectionId: Collection["id"] };
 }) {
-  const collection = await getCollectionById(params.id);
+  const collection = await getCollectionById(params.collectionId);
 
   return (
     <div className="flex flex-col justify-between gap-2 lg:flex-row">
-      <CollectionEditForm collection={collection} />
+      {collection && <CollectionEditForm collection={collection} />}
     </div>
   );
 }

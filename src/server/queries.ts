@@ -71,14 +71,17 @@ export async function getCollectionById(id: Collection["id"]) {
     throw new Error("You must be signed in to perform this action");
   }
 
-  const collection = await db.collection.findFirst({
-    where: {
-      id,
-      userId,
-    },
-  });
-
-  return collection;
+  try {
+    const collection = await db.collection.findFirst({
+      where: {
+        id,
+        userId,
+      },
+    });
+    return collection;
+  } catch (error) {
+    console.error("Something went wrong while getting a collection");
+  }
 }
 
 export async function getCardsByCollectionId(id: Collection["id"]) {
@@ -285,7 +288,10 @@ export async function isPinnable() {
   }
 }
 
-export async function toggleCollectionPin(id: Collection["id"]) {
+export async function toggleCollectionPin(
+  id: Collection["id"],
+  _prevState: FormState | { isPinned: boolean },
+) {
   const { userId } = auth();
 
   if (!userId) {
@@ -315,12 +321,15 @@ export async function toggleCollectionPin(id: Collection["id"]) {
       });
       return {
         success: true,
-        message: "The collection has been pinned",
+        message: `The collection has been ${currentCollection.pinned ? "unpinned" : "pinned"}`,
+        isPinned: !currentCollection.pinned,
       };
     } catch (error) {
-      console.error("Something went wrong while pinning a collection");
+      console.error(
+        `Something went wrong while ${currentCollection.pinned ? "unpinning" : "pinning"} a collection`,
+      );
       return {
-        message: "An error occurred while pinning a collection",
+        message: `An error occurred while ${currentCollection.pinned ? "unpinning" : "pinning"} a collection`,
         success: false,
       };
     }
