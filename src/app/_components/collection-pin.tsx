@@ -16,7 +16,7 @@ export default function CollectionPin({
   const initFormState = {
     success: false,
     message: "",
-    // isPinned: collection.pinned,
+    isPinned: collection.pinned,
   };
 
   const [formState, formAction] = useFormState(
@@ -27,7 +27,7 @@ export default function CollectionPin({
   return (
     <form className="btn btn-ghost" action={formAction}>
       <ButtonSubmit
-        className="flex justify-between"
+        className="flex grow items-center justify-between"
         name="pin"
         value="pin"
         disabled={isPinnable}

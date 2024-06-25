@@ -11,7 +11,7 @@ export default async function CardEditPage({
 
   return (
     <div className="flex flex-col justify-between gap-2 lg:flex-row">
-      <CardEditForm card={card} />
+      {card && <CardEditForm card={card} />}
     </div>
   );
 }

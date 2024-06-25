@@ -68,7 +68,7 @@ export default async function CollectionPage({
                   }}
                 >
                   <ButtonSubmit
-                    className="btn btn-ghost justify-between text-error"
+                    className="flex grow justify-between text-error"
                     name="delete"
                     value="delete"
                   >

@@ -290,7 +290,7 @@ export async function isPinnable() {
 
 export async function toggleCollectionPin(
   id: Collection["id"],
-  _prevState: FormState | { isPinned: boolean },
+  _prevState: { success: boolean; message: string; isPinned?: boolean },
 ) {
   const { userId } = auth();
 
@@ -319,11 +319,6 @@ export async function toggleCollectionPin(
           pinned: !currentCollection.pinned,
         },
       });
-      return {
-        success: true,
-        message: `The collection has been ${currentCollection.pinned ? "unpinned" : "pinned"}`,
-        isPinned: !currentCollection.pinned,
-      };
     } catch (error) {
       console.error(
         `Something went wrong while ${currentCollection.pinned ? "unpinning" : "pinning"} a collection`,
@@ -333,7 +328,22 @@ export async function toggleCollectionPin(
         success: false,
       };
     }
+
+    revalidatePath(`/collections/${id}`);
+
+    return {
+      success: true,
+      message: `The collection has been ${currentCollection.pinned ? "unpinned" : "pinned"}`,
+      isPinned: !currentCollection.pinned,
+    };
   }
+
+  revalidatePath(`/collections/${id}`);
+
+  return {
+    success: false,
+    message: "Collection not found",
+  };
 }
 
 export async function createCard(
