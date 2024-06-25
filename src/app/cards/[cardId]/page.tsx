@@ -1,4 +1,4 @@
-import { SquarePen, Trash2 } from "lucide-react";
+import { ChevronLeft, SquarePen, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { type Card } from "prisma/generated/zod";
@@ -18,22 +18,30 @@ export default async function CardPage({
 
   return (
     <div className="flex flex-col justify-between gap-2">
-      <form
-        className="flex justify-end gap-4"
-        action={deleteCard.bind(null, card)}
-      >
+      <div className="flex justify-between gap-2">
         <Link
-          href={`/cards/${params.cardId}/edit`}
-          className="btn btn-primary btn-sm items-center"
+          href={`/collections/${card.collectionId}`}
+          className="btn btn-ghost btn-sm justify-center"
         >
-          <SquarePen size={16} />
-          <span>Edit</span>
+          <ChevronLeft size={16} />
+          <span>back to collection</span>
         </Link>
-        <ButtonSubmit className="btn btn-error btn-sm items-center">
-          <Trash2 size={16} />
-          <span>Delete</span>
-        </ButtonSubmit>
-      </form>
+        <div className="flex gap-2">
+          <Link
+            href={`/cards/${params.cardId}/edit`}
+            className="btn btn-primary btn-sm items-center"
+          >
+            <SquarePen size={16} />
+            <span>Edit</span>
+          </Link>
+          <form action={deleteCard.bind(null, card)}>
+            <ButtonSubmit className="btn btn-error btn-sm items-center">
+              <Trash2 size={16} />
+              <span>Delete</span>
+            </ButtonSubmit>
+          </form>
+        </div>
+      </div>
       <div className="flex max-w-xl flex-col gap-2 self-center">
         <div className="flex flex-col">
           <p>Question:</p>
