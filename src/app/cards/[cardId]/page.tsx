@@ -1,9 +1,9 @@
 import { SquarePen, Trash2 } from "lucide-react";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { type Card } from "prisma/generated/zod";
 import ButtonSubmit from "~/app/_components/ui/button-submit";
 import { deleteCard, getCardById } from "~/server/queries";
-import { notFound } from "next/navigation";
 
 export default async function CardPage({
   params,
@@ -17,7 +17,7 @@ export default async function CardPage({
   }
 
   return (
-    <div className="flex flex-col justify-between gap-2 lg:flex-row">
+    <div className="flex flex-col justify-between gap-2">
       <form
         className="flex justify-end gap-4"
         action={deleteCard.bind(null, card)}
@@ -34,7 +34,16 @@ export default async function CardPage({
           <span>Delete</span>
         </ButtonSubmit>
       </form>
-      {card.question}
+      <div className="flex max-w-xl flex-col gap-2 self-center">
+        <div className="flex flex-col">
+          <p>Question:</p>
+          <h2 className="text-lg font-semibold">{card.question}</h2>
+        </div>
+        <div className="flex flex-col">
+          <p>Answer:</p>
+          <p>{card.answer}</p>
+        </div>
+      </div>
     </div>
   );
 }
