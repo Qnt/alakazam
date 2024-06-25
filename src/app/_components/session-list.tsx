@@ -24,6 +24,8 @@ export default function SessionList({
       const nextCard = cards[cards.indexOf(card) + 1];
       if (nextCard) {
         setCard(nextCard);
+      } else {
+        setCard(undefined);
       }
     }
   };
@@ -35,7 +37,7 @@ export default function SessionList({
 
   return (
     <div className="flex w-full flex-col items-center gap-10 lg:max-w-xl">
-      {cards.length === 0 && (
+      {(cards.length === 0 || !card) && (
         <>
           <h2 className="text-center">{sessionEndText}</h2>
           <button
