@@ -3,7 +3,7 @@ import { type Card } from "prisma/generated/zod";
 
 export default function CardCard({ card }: { card: Card }) {
   return (
-    <div className="card card-compact h-full w-full bg-base-200 text-neutral-content shadow-xl">
+    <div className="card card-compact h-full w-full bg-base-200 shadow-xl">
       <div className="card-body">
         <Link href={`/cards/${card.id}`} className="link-hover link">
           <h2 className="card-title">{card.question}</h2>
