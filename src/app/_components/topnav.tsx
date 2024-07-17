@@ -1,5 +1,6 @@
 import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
+import ThemeChanger from "./ui/theme-changer";
 
 export default function TopNav() {
   return (
@@ -35,7 +36,6 @@ export default function TopNav() {
           Alakazam
         </Link>
       </div>
-
       <div className="hidden flex-none lg:block">
         <ul className="menu menu-horizontal">
           <li>
@@ -46,18 +46,16 @@ export default function TopNav() {
           </li>
         </ul>
       </div>
-
-      <div className="flex-none">
-        <div>
-          <SignedOut>
-            <SignInButton>
-              <button className="btn btn-primary btn-sm">Sign In</button>
-            </SignInButton>
-          </SignedOut>
-          <SignedIn>
-            <UserButton />
-          </SignedIn>
-        </div>
+      <div className="flex items-center gap-4">
+        <ThemeChanger />
+        <SignedOut>
+          <SignInButton>
+            <button className="btn btn-primary btn-sm">Sign In</button>
+          </SignInButton>
+        </SignedOut>
+        <SignedIn>
+          <UserButton />
+        </SignedIn>
       </div>
     </div>
   );

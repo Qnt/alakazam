@@ -3,6 +3,7 @@ import "~/styles/globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { GeistSans } from "geist/font/sans";
 import type { Metadata } from "next";
+import { ThemeProvider } from "next-themes";
 import { Lilita_One } from "next/font/google";
 import Drawer from "./_components/drawer";
 import Footer from "./_components/footer";
@@ -27,10 +28,16 @@ export default function RootLayout({
 }) {
   return (
     <ClerkProvider>
-      <html lang="en" className={`${GeistSans.variable} ${lilitaOne.variable}`}>
+      <html
+        lang="en"
+        className={`${GeistSans.variable} ${lilitaOne.variable}`}
+        suppressHydrationWarning
+      >
         <body className="flex min-h-screen flex-col">
-          <Drawer>{children}</Drawer>
-          <Footer />
+          <ThemeProvider enableSystem={false}>
+            <Drawer>{children}</Drawer>
+            <Footer />
+          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>
