@@ -12,7 +12,7 @@ export default async function HomePage() {
           {`Max ${maxPinnedCollections} collections can be pinned at a time`}
         </p>
       </div>
-      <CollectionList pinned={true} />
+      <CollectionList pinned />
     </div>
   );
 }

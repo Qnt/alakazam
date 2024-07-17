@@ -9,9 +9,5 @@ export default async function Page({
 }) {
   const collection = await getCollectionById(params.collectionId);
 
-  return (
-    <div className="flex flex-col justify-between gap-2 lg:flex-row">
-      {collection && <CollectionEditForm collection={collection} />}
-    </div>
-  );
+  return <>{collection && <CollectionEditForm collection={collection} />}</>;
 }

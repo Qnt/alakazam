@@ -18,7 +18,7 @@ export default function CollectionEditForm({
   );
 
   return (
-    <form className="form-control gap-4" action={formAction}>
+    <form className="form-control mx-auto max-w-lg gap-4" action={formAction}>
       <div>
         {formState.message && (
           <div id="customer-error" aria-live="polite" aria-atomic="true">

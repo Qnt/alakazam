@@ -14,7 +14,7 @@ export default function CardEditForm({ card }: { card: Card }) {
   );
 
   return (
-    <form className="form-control gap-4" action={formAction}>
+    <form className="form-control mx-auto max-w-lg gap-4" action={formAction}>
       <div>
         {formState.message && (
           <div id="customer-error" aria-live="polite" aria-atomic="true">
@@ -47,10 +47,9 @@ export default function CardEditForm({ card }: { card: Card }) {
           <div className="label">
             <span className="label-text">Answer</span>
           </div>
-          <input
-            type="text"
+          <textarea
             placeholder="Answer"
-            className="input input-bordered w-full"
+            className="textarea textarea-bordered w-full"
             name="answer"
             defaultValue={card.answer ?? ""}
           />

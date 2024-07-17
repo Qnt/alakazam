@@ -17,12 +17,12 @@ export default function NewCollectionButton() {
     <>
       <button
         type="button"
-        className="btn btn-outline"
+        className="btn btn-ghost h-full"
         onClick={() => {
           dialogRef.current?.showModal();
         }}
       >
-        <span className="hidden md:inline">Create a collection</span>
+        <span>Create a collection</span>
         <BadgePlus />
       </button>
       <NewCollectionModal ref={dialogRef} key={modalKey} resetKey={resetKey} />

@@ -9,9 +9,5 @@ export default async function CardEditPage({
 }) {
   const card = await getCardById(params.cardId);
 
-  return (
-    <div className="flex flex-col justify-between gap-2 lg:flex-row">
-      {card && <CardEditForm card={card} />}
-    </div>
-  );
+  return <>{card && <CardEditForm card={card} />}</>;
 }

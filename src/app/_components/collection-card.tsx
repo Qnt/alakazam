@@ -8,7 +8,7 @@ export default function CollectionCard({
   collection: Collection;
 }) {
   return (
-    <div className="card card-compact h-full w-full bg-base-200 text-base-content shadow-xl">
+    <div className="card card-compact bg-base-200 text-base-content shadow-xl">
       <div className="card-body justify-between">
         <Link
           className="link-hover link"
