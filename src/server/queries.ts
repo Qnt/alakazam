@@ -154,7 +154,7 @@ export async function createCollection(
     }
   }
 
-  revalidatePath("/collections");
+  revalidatePath("dashboard/collections");
 
   return {
     success: true,
@@ -220,7 +220,7 @@ export async function updateCollection(
     }
   }
 
-  redirect(`/collections/${id}`);
+  redirect(`/dashboard/collections/${id}`);
 }
 
 export async function deleteCollection(id: Collection["id"]) {
@@ -329,7 +329,7 @@ export async function toggleCollectionPin(
       };
     }
 
-    revalidatePath(`/collections/${id}`);
+    revalidatePath(`/dashboard/collections/${id}`);
 
     return {
       success: true,
@@ -338,7 +338,7 @@ export async function toggleCollectionPin(
     };
   }
 
-  revalidatePath(`/collections/${id}`);
+  revalidatePath(`/dashboard/collections/${id}`);
 
   return {
     success: false,
@@ -403,7 +403,7 @@ export async function createCard(
     }
   }
 
-  revalidatePath(`/collections/${collectionId}`);
+  revalidatePath(`/dashboard/collections/${collectionId}`);
 
   return {
     success: true,
@@ -473,7 +473,7 @@ export async function updateCard(
     }
   }
 
-  redirect(`/collections/${collectionId}`);
+  redirect(`/dashboard/collections/${collectionId}`);
 }
 
 export async function getCardById(id: Card["id"]) {
@@ -515,7 +515,7 @@ export async function deleteCard(card: Card) {
     };
   }
 
-  redirect(`/collections/${card.collectionId}`);
+  redirect(`/dashboard/collections/${card.collectionId}`);
 }
 
 export async function getSessions(collectionId: Collection["id"]) {
@@ -670,7 +670,7 @@ export async function nextSession(collectionId: Collection["id"]) {
       },
     });
 
-    revalidatePath(`/collections/${collectionId}/session`);
+    revalidatePath(`/dashboard/collections/${collectionId}/session`);
   } catch (error) {
     console.error("Something went wrong while updating the session", error);
     return {

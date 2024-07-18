@@ -5,8 +5,6 @@ import { GeistSans } from "geist/font/sans";
 import type { Metadata } from "next";
 import { ThemeProvider } from "next-themes";
 import { Lilita_One } from "next/font/google";
-import Drawer from "./_components/drawer";
-import Footer from "./_components/footer";
 
 const lilitaOne = Lilita_One({
   subsets: ["latin"],
@@ -35,8 +33,7 @@ export default function RootLayout({
       >
         <body className="flex min-h-screen flex-col">
           <ThemeProvider enableColorScheme defaultTheme="dark">
-            <Drawer>{children}</Drawer>
-            <Footer />
+            {children}
           </ThemeProvider>
         </body>
       </html>

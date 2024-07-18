@@ -66,7 +66,7 @@ export default function CardEditForm({ card }: { card: Card }) {
             <span className="label-text">Box</span>
           </div>
           <select
-            className="select select-bordered w-full"
+            className="select select-bordered w-full lowercase"
             defaultValue={card.box}
             name="box"
           >
@@ -85,7 +85,7 @@ export default function CardEditForm({ card }: { card: Card }) {
       </div>
 
       <ButtonSubmit className="btn btn-primary">Save</ButtonSubmit>
-      <Link className="btn btn-ghost" href={`/cards/${card.id}`}>
+      <Link className="btn btn-ghost" href={`/dashboard/cards/${card.id}`}>
         Cancel
       </Link>
     </form>

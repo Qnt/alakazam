@@ -24,7 +24,7 @@ export default async function StartSession({
     >
       <Link
         className="flex items-center"
-        href={`/collections/${collectionId}/session`}
+        href={`/dashboard/collections/${collectionId}/session`}
       >
         <Play />
         {children}

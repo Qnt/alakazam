@@ -20,7 +20,7 @@ export default async function CardPage({
     <div className="flex flex-col justify-between gap-2">
       <div className="flex justify-between gap-2">
         <Link
-          href={`/collections/${card.collectionId}`}
+          href={`/dashboard/collections/${card.collectionId}`}
           className="btn btn-ghost btn-sm justify-center"
         >
           <ChevronLeft size={16} />
@@ -28,7 +28,7 @@ export default async function CardPage({
         </Link>
         <div className="flex gap-2">
           <Link
-            href={`/cards/${params.cardId}/edit`}
+            href={`/dashboard/cards/${params.cardId}/edit`}
             className="btn btn-primary btn-sm items-center"
           >
             <SquarePen size={16} />
@@ -42,7 +42,7 @@ export default async function CardPage({
           </form>
         </div>
       </div>
-      <div className="flex max-w-xl flex-col gap-2 self-center">
+      <div className="flex max-w-xl flex-col gap-4 self-center">
         <div className="flex flex-col">
           <p>Question:</p>
           <h2 className="text-lg font-semibold">{card.question}</h2>

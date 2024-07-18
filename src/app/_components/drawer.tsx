@@ -21,7 +21,7 @@ export default function Drawer({ children }: { children: ReactNode }) {
       />
       <div className="drawer-content flex flex-col">
         <TopNav />
-        <main className="grow px-4 py-2">{children}</main>
+        <main className="grow p-4">{children}</main>
       </div>
       <div className="drawer-side z-40">
         <label
@@ -32,13 +32,13 @@ export default function Drawer({ children }: { children: ReactNode }) {
         <div className="menu min-h-full w-80 bg-base-200 p-4">
           <ul onClick={handleClick}>
             <li>
-              <Link href="/home/">
+              <Link href="/dashboard">
                 <Home />
-                <span>Home</span>
+                <span>Dashboard</span>
               </Link>
             </li>
             <li>
-              <Link href="/collections">
+              <Link href="/dashboard/collections">
                 <Library />
                 <span>Collections</span>
               </Link>

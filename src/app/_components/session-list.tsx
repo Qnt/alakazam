@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { type Card, type Collection } from "prisma/generated/zod";
 import { useEffect, useState } from "react";
 import { demoteCard, nextSession, promoteCard } from "~/server/queries";
@@ -40,17 +41,22 @@ export default function SessionList({
       {(cards.length === 0 || !card) && (
         <>
           <h2 className="text-center">{sessionEndText}</h2>
-          <button
-            className="btn btn-primary"
-            disabled={isPending}
-            onClick={async () => {
-              setPending(true);
-              await nextSession(collectionId);
-              setPending(false);
-            }}
-          >
-            Next session
-          </button>
+          <div className="grid grid-cols-2 gap-2">
+            <Link href={`/dashboard/collections/${collectionId}`} className="btn">
+              Back to collection
+            </Link>
+            <button
+              className="btn btn-primary"
+              disabled={isPending}
+              onClick={async () => {
+                setPending(true);
+                await nextSession(collectionId);
+                setPending(false);
+              }}
+            >
+              Next session
+            </button>
+          </div>
         </>
       )}
       {cards.length > 0 && card && (

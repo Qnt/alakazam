@@ -5,7 +5,7 @@ export default function CardCard({ card }: { card: Card }) {
   return (
     <div className="card card-compact h-full w-full bg-base-200 shadow-md">
       <div className="card-body">
-        <Link href={`/cards/${card.id}`} className="link-hover link">
+        <Link href={`/dashboard/cards/${card.id}`} className="link-hover link">
           <h2 className="card-title">{card.question}</h2>
         </Link>
         <p className="pb-4">{card.answer}</p>

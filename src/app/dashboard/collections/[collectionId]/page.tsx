@@ -30,7 +30,7 @@ export default async function CollectionPage({
         <div className="flex items-center justify-end gap-2">
           <StartSession
             collectionId={params.collectionId}
-            className="btn btn-primary tooltip tooltip-left"
+            className="btn btn-primary"
           >
             <span className="hidden md:inline">Start session</span>
           </StartSession>
@@ -44,7 +44,7 @@ export default async function CollectionPage({
             >
               <li>
                 <Link
-                  href={`/collections/${collection.id}/edit`}
+                  href={`/dashboard/collections/${collection.id}/edit`}
                   className="btn btn-ghost justify-between"
                 >
                   <span>Edit</span>

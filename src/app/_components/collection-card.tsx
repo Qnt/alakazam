@@ -12,7 +12,7 @@ export default function CollectionCard({
       <div className="card-body justify-between">
         <Link
           className="link-hover link"
-          href={`/collections/${collection.id}`}
+          href={`/dashboard/collections/${collection.id}`}
         >
           <h2 className="card-title">{collection.name}</h2>
         </Link>
@@ -24,7 +24,7 @@ export default function CollectionCard({
         <div className="flex justify-center gap-4 pt-4">
           <StartSession
             collectionId={collection.id}
-            className="btn btn-primary tooltip tooltip-top w-full"
+            className="btn btn-primary w-full"
           >
             Start session
           </StartSession>

@@ -30,7 +30,7 @@ export default function TopNav() {
       </SignedIn>
       <div className="flex-1">
         <Link
-          href="/"
+          href="/dashboard"
           className="btn btn-ghost font-logo text-xl font-normal uppercase"
         >
           Alakazam
@@ -39,10 +39,10 @@ export default function TopNav() {
       <div className="hidden flex-none lg:block">
         <ul className="menu menu-horizontal">
           <li>
-            <Link href="/home">Home</Link>
+            <Link href="/dashboard">Dashboard</Link>
           </li>
           <li>
-            <Link href="/collections">Collections</Link>
+            <Link href="/dashboard/collections">Collections</Link>
           </li>
         </ul>
       </div>
