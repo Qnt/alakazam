@@ -55,7 +55,6 @@ const NewCollectionModal = forwardRef<HTMLDialogElement, CollectionModalProps>(
                 </button>
                 <h2 className="text-lg font-semibold">New Collection</h2>
                 <form className="form-control gap-4" action={formAction}>
-                  {/* {!formState.success && <p>{formState.message}</p>} */}
                   <div>
                     <label className="form-control w-full">
                       <div className="label">
@@ -67,7 +66,6 @@ const NewCollectionModal = forwardRef<HTMLDialogElement, CollectionModalProps>(
                         className="input input-bordered w-full"
                         name="name"
                         aria-describedby="user-error"
-                        autoFocus
                       />
                     </label>
                     <div
@@ -89,14 +87,13 @@ const NewCollectionModal = forwardRef<HTMLDialogElement, CollectionModalProps>(
                       </div>
                       <textarea
                         className="textarea textarea-bordered h-24"
-                        autoFocus
                         placeholder="Description"
                         aria-describedby="user-error"
                         name="description"
                       ></textarea>
                     </label>
                   </div>
-                  <div className="flex-re flex flex-col gap-4 md:flex-row-reverse">
+                  <div className="flex flex-col gap-4 md:flex-row-reverse">
                     <ButtonSubmit className="btn btn-primary">
                       Create
                     </ButtonSubmit>

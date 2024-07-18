@@ -110,7 +110,7 @@ const NewCardModal = forwardRef<HTMLDialogElement, CardModalProps>(
                         <span className="label-text">Box</span>
                       </div>
                       <select
-                        className="select select-bordered w-full max-w-xs"
+                        className="select select-bordered w-full lowercase"
                         name="box"
                         defaultValue={BoxSchema.Values.BEGINNER}
                       >

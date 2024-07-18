@@ -8,7 +8,7 @@ export default function CollectionCard({
   collection: Collection;
 }) {
   return (
-    <div className="card card-compact bg-base-200 text-base-content shadow-xl">
+    <div className="card card-compact bg-base-200 text-base-content shadow-md">
       <div className="card-body justify-between">
         <Link
           className="link-hover link"
@@ -26,7 +26,7 @@ export default function CollectionCard({
             collectionId={collection.id}
             className="btn btn-primary tooltip tooltip-top w-full"
           >
-            Start
+            Start session
           </StartSession>
         </div>
       </div>
