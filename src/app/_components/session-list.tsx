@@ -37,12 +37,15 @@ export default function SessionList({
       : "Session complete";
 
   return (
-    <div className="flex w-full flex-col items-center gap-10 lg:max-w-xl">
+    <div className="flex w-full max-w-xl flex-col items-center gap-10">
       {(cards.length === 0 || !card) && (
         <>
           <h2 className="text-center">{sessionEndText}</h2>
           <div className="grid grid-cols-2 gap-2">
-            <Link href={`/dashboard/collections/${collectionId}`} className="btn">
+            <Link
+              href={`/dashboard/collections/${collectionId}`}
+              className="btn"
+            >
               Back to collection
             </Link>
             <button
