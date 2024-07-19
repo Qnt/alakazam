@@ -8,9 +8,9 @@ export default async function CollectionList(
 ) {
   const collections = await getMyCollections(props);
   return (
-    <ul className="w-md md:w-none flex flex-col gap-4 md:grid md:grid-cols-[repeat(auto-fill,minmax(20rem,1fr))]">
+    <ul className="w-md md:w-none flex flex-col gap-6 md:grid md:grid-cols-[repeat(auto-fill,minmax(20rem,1fr))]">
       {!props.pinned && (
-        <div className="card card-compact border-2 border-dashed border-info text-info">
+        <div className="card card-compact border-2 border-dashed border-base-content/10 text-info">
           <div className="card-body">
             <NewCollectionButton />
           </div>
