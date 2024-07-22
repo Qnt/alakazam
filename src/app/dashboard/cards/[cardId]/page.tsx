@@ -1,4 +1,4 @@
-import { ChevronLeft, SquarePen, Trash2 } from "lucide-react";
+import { ChevronLeft, Ellipsis, SquarePen, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { type Card } from "prisma/generated/zod";
@@ -18,7 +18,7 @@ export default async function CardPage({
   console.log(card);
   return (
     <div className="flex flex-col justify-between gap-4">
-      <div className="flex justify-between gap-2">
+      <div className="flex items-center justify-between gap-2">
         <Link
           href={`/dashboard/collections/${card.collectionId}`}
           className="btn btn-ghost btn-sm justify-center"
@@ -26,23 +26,42 @@ export default async function CardPage({
           <ChevronLeft size={16} />
           <span>back to collection</span>
         </Link>
-        <div className="flex gap-2">
-          <Link
-            href={`/dashboard/cards/${params.cardId}/edit`}
-            className="btn btn-primary btn-sm flex-nowrap items-center"
+        <div className="dropdown dropdown-end">
+          <div tabIndex={0} role="button" className="btn btn-outline">
+            <Ellipsis />
+          </div>
+          <ul
+            tabIndex={0}
+            className="menu dropdown-content z-[1] w-52 rounded-box border-2 border-base-content/10 bg-base-300 p-2 shadow"
           >
-            <SquarePen size={16} />
-            <span className="hidden md:block">Edit</span>
-          </Link>
-          <form action={deleteCard.bind(null, card)}>
-            <ButtonSubmit className="btn btn-error btn-sm flex-nowrap items-center">
-              <Trash2 size={16} />
-              <span className="hidden md:block">Delete</span>
-            </ButtonSubmit>
-          </form>
+            <li>
+              <Link
+                href={`/dashboard/cards/${params.cardId}/edit`}
+                className="btn btn-ghost justify-between"
+              >
+                <span>Edit</span>
+                <SquarePen />
+              </Link>
+            </li>
+            <li>
+              <form
+                className="btn btn-ghost justify-between"
+                action={deleteCard.bind(null, card)}
+              >
+                <ButtonSubmit
+                  className="flex grow items-center justify-between text-error"
+                  name="delete"
+                  value="delete"
+                >
+                  <span>Delete</span>
+                  <Trash2 />
+                </ButtonSubmit>
+              </form>
+            </li>
+          </ul>
         </div>
       </div>
-      <div className="card mx-auto max-w-xl bg-base-200 shadow-md">
+      <div className="card mx-auto max-w-xl border-2 border-base-content/10 bg-base-200 shadow-md">
         <div className="card-body">
           <h2 className="card-title">{card.question}</h2>
           <p className="pb-4">{card.answer}</p>
