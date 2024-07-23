@@ -564,6 +564,8 @@ export async function getCardsForSession(
     boxesToGet.push("ADVANCED");
   }
 
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+
   try {
     const cards = await db.card.findMany({
       where: {

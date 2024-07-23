@@ -12,7 +12,7 @@ export default async function SessionPage({
 
   return (
     <div className="flex h-full flex-col items-center justify-center gap-4">
-      <h2>{`Session ${session}`}</h2>
+      <h2 className="text-lg font-semibold">{`Session #${session}`}</h2>
       {cards && (
         <SessionList cards={cards} collectionId={params.collectionId} />
       )}
