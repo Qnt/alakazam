@@ -1,7 +1,7 @@
 import { Suspense } from "react";
-import Loading from "./loading";
+import Loading from "../loading";
 
-export default function CollectionLayout({
+export default function CardLayout({
   children,
 }: {
   children: React.ReactNode;
