@@ -50,7 +50,6 @@ export async function getMyCollections(
   if (!userId) {
     throw new Error("You must be signed in to perform this action");
   }
-
   const collections = await db.collection.findMany({
     where: {
       ...args,

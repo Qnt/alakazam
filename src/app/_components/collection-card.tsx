@@ -14,7 +14,7 @@ export default async function CollectionCard({
 
   return (
     <div className="group stack">
-      <div className="card h-full border-2 border-base-content/10 bg-base-200 text-base-content shadow-md transition-all  group-hover:-translate-y-[2%] group-hover:scale-[102%]">
+      <div className="card h-full border-2 border-base-content/10 bg-base-200 text-base-content shadow-md transition-all group-hover:-translate-y-[2%] group-hover:scale-[102%]">
         <div className="card-body justify-between">
           <Link
             className="link-hover link"
