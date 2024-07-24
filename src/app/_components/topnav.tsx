@@ -42,7 +42,7 @@ export default function TopNav() {
             <Link href="/dashboard">Dashboard</Link>
           </li>
           <li>
-            <Link href="/dashboard/collections">Collections</Link>
+            <Link href="/collections">Collections</Link>
           </li>
         </ul>
       </div>

@@ -18,7 +18,7 @@ export default async function CollectionCard({
         <div className="card-body justify-between">
           <Link
             className="link-hover link"
-            href={`/dashboard/collections/${collection.id}`}
+            href={`/collections/${collection.id}`}
           >
             <h2 className="card-title">{collection.name}</h2>
           </Link>

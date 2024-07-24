@@ -19,10 +19,7 @@ export default async function StartSession({
   const hasCards = cards.length > 0;
 
   return (
-    <Link
-      className="w-full"
-      href={`/dashboard/collections/${collectionId}/session`}
-    >
+    <Link className="w-full" href={`/collections/${collectionId}/session`}>
       <div
         className={`flex items-center ${className} ${hasCards ? "" : "btn-disabled"}`}
       >

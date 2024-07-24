@@ -7,5 +7,5 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <Drawer>{children} </Drawer>;
+  return <Drawer>{children}</Drawer>;
 }

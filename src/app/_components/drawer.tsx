@@ -38,7 +38,7 @@ export default function Drawer({ children }: { children: ReactNode }) {
               </Link>
             </li>
             <li>
-              <Link href="/dashboard/collections">
+              <Link href="/collections">
                 <Library />
                 <span>Collections</span>
               </Link>

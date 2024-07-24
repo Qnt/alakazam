@@ -85,7 +85,7 @@ export default function CardEditForm({ card }: { card: Card }) {
       </div>
 
       <ButtonSubmit className="btn btn-primary">Save</ButtonSubmit>
-      <Link className="btn btn-ghost" href={`/dashboard/cards/${card.id}`}>
+      <Link className="btn btn-ghost" href={`/cards/${card.id}`}>
         Cancel
       </Link>
     </form>

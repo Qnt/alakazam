@@ -44,7 +44,7 @@ export default async function CollectionPage({
             >
               <li>
                 <Link
-                  href={`/dashboard/collections/${collection.id}/edit`}
+                  href={`/collections/${collection.id}/edit`}
                   className="btn btn-ghost justify-between"
                 >
                   <span>Edit</span>

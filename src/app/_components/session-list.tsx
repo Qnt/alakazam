@@ -42,10 +42,7 @@ export default function SessionList({
         <>
           <h2 className="text-center">{sessionEndText}</h2>
           <div className="grid grid-cols-2 gap-2">
-            <Link
-              href={`/dashboard/collections/${collectionId}`}
-              className="btn"
-            >
+            <Link href={`/collections/${collectionId}`} className="btn">
               Back to collection
             </Link>
             <button

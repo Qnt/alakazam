@@ -19,7 +19,7 @@ export default async function CardPage({
     <div className="flex flex-col justify-between gap-4">
       <div className="flex items-center justify-between gap-2">
         <Link
-          href={`/dashboard/collections/${card.collectionId}`}
+          href={`/collections/${card.collectionId}`}
           className="btn btn-ghost btn-sm justify-center"
         >
           <ChevronLeft size={16} />
@@ -35,7 +35,7 @@ export default async function CardPage({
           >
             <li>
               <Link
-                href={`/dashboard/cards/${params.cardId}/edit`}
+                href={`/cards/${params.cardId}/edit`}
                 className="btn btn-ghost justify-between"
               >
                 <span>Edit</span>

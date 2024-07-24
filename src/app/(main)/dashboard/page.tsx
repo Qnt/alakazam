@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import CollectionList from "../_components/collection-list";
+import CollectionList from "../../_components/collection-list";
 import Loading from "./loading";
 
 export default async function DashboardPage() {

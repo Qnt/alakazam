@@ -61,10 +61,7 @@ export default function CollectionEditForm({
         </label>
       </div>
       <ButtonSubmit className="btn btn-primary">Save</ButtonSubmit>
-      <Link
-        className="btn btn-ghost"
-        href={`/dashboard/collections/${collection.id}`}
-      >
+      <Link className="btn btn-ghost" href={`/collections/${collection.id}`}>
         Cancel
       </Link>
     </form>

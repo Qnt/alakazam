@@ -1,4 +1,4 @@
-import ContentGrid from "../_components/ui/content-grid";
+import ContentGrid from "../../_components/ui/content-grid";
 
 export default function Loading() {
   return (
