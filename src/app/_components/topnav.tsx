@@ -6,7 +6,7 @@ export default function TopNav() {
   return (
     <div className="navbar sticky top-0 z-30 bg-base-200">
       <SignedIn>
-        <div className="flex-none lg:hidden">
+        <div className="flex-none md:hidden">
           <label
             htmlFor="drawer"
             aria-label="open sidebar"
@@ -36,7 +36,7 @@ export default function TopNav() {
           Alakazam
         </Link>
       </div>
-      <div className="hidden flex-none lg:block">
+      <div className="hidden flex-none md:block">
         <ul className="menu menu-horizontal">
           <li>
             <Link href="/dashboard">Dashboard</Link>
