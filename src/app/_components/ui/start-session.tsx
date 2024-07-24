@@ -19,13 +19,20 @@ export default async function StartSession({
   const hasCards = cards.length > 0;
 
   return (
-    <Link className="w-full" href={`/collections/${collectionId}/session`}>
-      <div
-        className={`flex items-center ${className} ${hasCards ? "" : "btn-disabled"}`}
-      >
-        <Play />
-        {children}
-      </div>
-    </Link>
+    <>
+      {hasCards ? (
+        <Link className="w-full" href={`/collections/${collectionId}/session`}>
+          <div className={`flex items-center ${className}`}>
+            <Play />
+            {children}
+          </div>
+        </Link>
+      ) : (
+        <div className={`btn-disabled flex items-center ${className}`}>
+          <Play />
+          {children}
+        </div>
+      )}
+    </>
   );
 }

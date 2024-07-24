@@ -68,7 +68,6 @@ const NewCardModal = forwardRef<HTMLDialogElement, CardModalProps>(
                         placeholder="Question"
                         name="question"
                         aria-describedby="user-error"
-                        autoFocus
                       ></textarea>
                     </label>
                     <div
@@ -91,7 +90,6 @@ const NewCardModal = forwardRef<HTMLDialogElement, CardModalProps>(
                         placeholder="Answer"
                         name="answer"
                         aria-describedby="user-error"
-                        autoFocus
                       ></textarea>
                     </label>
                     <div
