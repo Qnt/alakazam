@@ -2,6 +2,8 @@
 
 Flash card based application for effective memorization and repetition.
 
+Link to the deployed version: <https://alakazam-nine.vercel.app/>
+
 ## Features
 
 - User authentication
